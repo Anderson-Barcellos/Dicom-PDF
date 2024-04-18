@@ -28,7 +28,7 @@ def Down_One(id):
         f.write(response)
 
 
-def Last_Change():
+def Change():
     get = orthanc.get_patients()
 
     id = f"{get[0]}"
@@ -125,19 +125,6 @@ def PDF_Process():
     #                 if file2.endswith(".pdf"):
     #                     MkPDF.MergePDF(f"{file}", f"{file2}")
 
-
-def main2():
-    try:
-        for file in os.listdir("ZIPS"):
-            print(file)
-            if file.endswith(".zip"):
-                Extract_Convert_Video(f"{file}")
-            else:
-                print("Arquivo não encontrado!")
-
-    except Exception as e:
-        print(e)
-
 # GENERATE A FUNCTION DO MERGE TWO PDFS
 def MergePDF(file1, file2):
     pdf1 = open(file1, "rb")
@@ -157,9 +144,9 @@ def MergePDF(file1, file2):
     pdf1.close()
     pdf2.close()
     print("PDFs merged successfully!")
-import time
+
 
 
 Last_Change()
 PDF_Process()
-sleep(intervalo)  # Pausa o loop pelo tempo definido no intervalo
+

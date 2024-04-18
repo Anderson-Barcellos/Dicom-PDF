@@ -10,7 +10,14 @@ from io import BytesIO
 def MkPDF(name: str):
     """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page."""
     # Initialize PDF
-    pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4)
+    # Margens do documento
+doc_margin = 20
+
+# Initialize PDF with adjusted margins
+pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=doc_margin, bottomMargin=doc_margin)
+
+
+
 
     # Create current folder path
     folder = os.path.join(os.getcwd(), "Images")
@@ -20,8 +27,10 @@ def MkPDF(name: str):
     num_cols = 2
     cell_padding = 5
 
-    # Page and table dimensions
+
     width, height = A4
+    width -= 2 * doc_margin  # Adjust width for margins
+    height -= 2 * doc_margin  # Adjust height for margins
     table_width = 0.95 * width
     table_height = 0.95 * height
     cell_width = table_width / num_cols
@@ -76,6 +85,5 @@ def MkPDF(name: str):
         )
     )
     pdf.build([table])
-
-    print("Done!")
-
+    print(f"PDF criado com sucesso")
+    
