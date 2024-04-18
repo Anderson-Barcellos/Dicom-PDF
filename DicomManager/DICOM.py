@@ -80,5 +80,13 @@ class DICOM2JPEG:
 
         except Exception as e:
             print(e)
+    
+    def eliminate_zips(self):
+        try:
+            for file in os.listdir("ZIPS"):
+                if file.endswith(".zip"):
+                    os.remove(os.path.join("ZIPS", file))
+        except Exception as e:
+            print(e)
 
 
