@@ -11,7 +11,6 @@ from pyorthanc import Orthanc
 
 orthanc = Orthanc("http://usview.tech:8042", "orthanc", "orthanc")
 
-
 def Down_All():
     patients = orthanc.get_patients()
     for patient in patients:
@@ -125,6 +124,9 @@ def PDF_Process():
     #                 if file2.endswith(".pdf"):
     #                     MkPDF.MergePDF(f"{file}", f"{file2}")
 
+
+
+
 # GENERATE A FUNCTION DO MERGE TWO PDFS
 def MergePDF(file1, file2):
     pdf1 = open(file1, "rb")
@@ -147,6 +149,5 @@ def MergePDF(file1, file2):
 
 
 
-Last_Change()
+Change()
 PDF_Process()
-

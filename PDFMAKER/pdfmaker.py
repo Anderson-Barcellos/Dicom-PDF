@@ -11,10 +11,10 @@ def MkPDF(name: str):
     """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page."""
     # Initialize PDF
     # Margens do documento
-doc_margin = 20
+    doc_margin = 20
 
-# Initialize PDF with adjusted margins
-pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=doc_margin, bottomMargin=doc_margin)
+    # Initialize PDF with adjusted margins
+    pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=doc_margin, bottomMargin=doc_margin)
 
 
 
