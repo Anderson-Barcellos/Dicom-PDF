@@ -4,7 +4,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
-from io import BytesIO
+
 
 
 def MkPDF(name: str):
@@ -14,8 +14,8 @@ def MkPDF(name: str):
     doc_margin = 20
 
     # Initialize PDF with adjusted margins
-    pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=doc_margin, bottomMargin=doc_margin)
-
+    pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=20, bottomMargin=doc_margin)
+    
 
 
 
@@ -29,61 +29,96 @@ def MkPDF(name: str):
 
 
     width, height = A4
-    width -= 2 * doc_margin  # Adjust width for margins
-    height -= 2 * doc_margin  # Adjust height for margins
-    table_width = 0.95 * width
-    table_height = 0.95 * height
+    width -= 1 * doc_margin  # Adjust width for margins
+    height -= 1 * doc_margin  # Adjust height for margins
+    table_width = 0.98* width
+    table_height = 0.98 * height
     cell_width = table_width / num_cols
     cell_height = table_height / num_rows
 
     # List all JPG images in the folder
-    images = [
-        f for f in os.listdir(folder) if f.endswith(".jpeg") or f.endswith(".jpg") or f.endswith(".png") or f.endswith(".JPG")
-    ]
 
-    # Start table data list
-    data = []
+    def T(): 
+        images = [
+            f for f in os.listdir(folder) if f.endswith(".jpeg") or f.endswith(".jpg") or f.endswith(".png") or f.endswith(".JPG")
+        ]
+        data = []
+        data2 = []
+        # Start table data list
+        
+        def imager(data,images): 
+            # Add images to the data list
+            for i in range(num_rows):
+                row = []
+                for j in range(num_cols):
+                    try:
+                        img_path = images.pop(0)
+                        img_path = os.path.join(folder, img_path)
+                    except IndexError:
+                        row.append("")  # No more images to add
+                        continue
 
-    # Add images to the data list
-    for i in range(num_rows):
-        row = []
-        for j in range(num_cols):
-            try:
-                img_path = images.pop(0)
-                img_path = os.path.join(folder, img_path)
-            except IndexError:
-                row.append("")  # No more images to add
-                continue
+            
+                    img = Image.open(img_path)
+                    rl_img = rlImage(img_path)
 
-            # Convert PIL image to a ReportLab Image
-            img_byte_arr = BytesIO()
-            img = Image.open(img_path)
-            img.save(img_byte_arr, format="JPEG")
-            img_byte_arr = img_byte_arr.getvalue()
-            rl_img = rlImage(BytesIO(img_byte_arr))
 
-            # Adjust the display size of the image in the PDF
-            w_ratio = (cell_width - 2 * cell_padding) / img.size[0]
-            h_ratio = (cell_height - 2 * cell_padding) / img.size[1]
-            ratio = min(w_ratio, h_ratio)
+                    # Adjust the display size of the image in the PDF
+                    w_ratio = (cell_width - 2 * cell_padding) / img.size[0]
+                    h_ratio = (cell_height - 2 * cell_padding) / img.size[1]
+                    ratio = min(w_ratio, h_ratio)
 
-            rl_img.drawHeight = img.size[1] * ratio
-            rl_img.drawWidth = img.size[0] * ratio
+                    rl_img.drawHeight = img.size[1] * ratio
+                    rl_img.drawWidth = img.size[0] * ratio
 
-            row.append(rl_img)
+                    row.append(rl_img)
 
-        data.append(row)
+                data.append(row)
+            return data
+               # Create the table
 
-    # Create the table
-    table = Table(data)
-    table.setStyle(
-        TableStyle(
-            [
-                ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
-                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ]
-        )
-    )
-    pdf.build([table])
-    print(f"PDF criado com sucesso")
-    
+        if len(images) <=8:
+            data = imager(data,images)
+            table = Table(data)
+            table.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+            pdf.build([table])
+            print(f"PDF criado com sucesso")
+
+                  
+        else:
+            half =images[:8]
+            data = imager(data,half)
+            other_half = images[8:]
+            data2 = imager(data2,other_half)
+
+            table = Table(data)
+            table.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+
+            table2 = Table(data2)
+            table2.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+            pdf.build([table,table2])
+            print(f"PDF criado com sucesso")
+    T()
+
+     

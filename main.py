@@ -1,95 +1,130 @@
 from DicomManager.unzip import Unzipper
 from DicomManager.DICOM import DICOM2JPEG
-from PDFMAKER.pdfmaker import MkPDF
+
 import os
-import PyPDF2
-
-import glob
-
-# ORTHANC
-from pyorthanc import Orthanc
-
-orthanc = Orthanc("http://usview.tech:8042", "orthanc", "orthanc")
-
-def Down_All():
-    patients = orthanc.get_patients()
-    for patient in patients:
-        print(patient)
-        response = orthanc.get_patients_id_archive(str(patient))
-        with open(f"ZIPS/{patient}.zip", "wb") as f:
-            f.write(response)
+from PIL import Image
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Image as rlImage
+from reportlab.lib import colors
 
 
-# Donnload one patient
-def Down_One(id):
-    response = orthanc.get_patients_id_archive(id)
-    with open(f"ZIPS/{id}.zip", "wb") as f:
-        f.write(response)
+
+def MkPDF(name: str):
+    """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page."""
+    # Initialize PDF
+    # Margens do documento
+    doc_margin = 20
+
+    # Initialize PDF with adjusted margins
+    pdf = SimpleDocTemplate(f"{name[15:]}.pdf", pagesize=A4, rightMargin=doc_margin, leftMargin=doc_margin, topMargin=20, bottomMargin=doc_margin)
+    
 
 
-def Change():
-    get = orthanc.get_patients()
 
-    id = f"{get[0]}"
-    """p_changes = None
-    with open("last_change.txt", "r") as f:
-        p_changes = str(f.read())
-    if p_changes == id or p_changes == "":
-        with open("last_change.txt", "w") as f:
-            f.write(id)
-        print("No changes")
-    else:
-        with open("last_change.txt", "w") as f:
-            f.write(id)"""
-    print("Changes")
-    Down_All()
-    print("Done")
+    # Create current folder path
+    folder = os.path.join(os.getcwd(), "Images")
+
+    # Table settings
+    num_rows = 4
+    num_cols = 2
+    cell_padding = 5
 
 
-def PDFMerger(output_filename="merged_document.pdf"):
-    """
-    Procura por todos os arquivos PDF na pasta atual e os une em um único arquivo PDF.
+    width, height = A4
+    width -= 1 * doc_margin  # Adjust width for margins
+    height -= 1 * doc_margin  # Adjust height for margins
+    table_width = 0.98* width
+    table_height = 0.98 * height
+    cell_width = table_width / num_cols
+    cell_height = table_height / num_rows
 
-    :param output_filename: Nome do arquivo de saída.
-    """
-    pdf_files = sorted(glob.glob("*.pdf"))
-    if not pdf_files:
-        print("Nenhum arquivo PDF encontrado na pasta.")
-        return
+    # List all JPG images in the folder
 
-    pdf_writer = PyPDF2.PdfWriter()  # Atualizado para PdfWriter
+    def T(): 
+        images = [
+            f for f in os.listdir(folder) if f.endswith(".jpeg") or f.endswith(".jpg") or f.endswith(".png") or f.endswith(".JPG")
+        ]
+        data = []
+        data2 = []
+        # Start table data list
+        
+        def imager(data,images): 
+            # Add images to the data list
+            for i in range(num_rows):
+                row = []
+                for j in range(num_cols):
+                    try:
+                        img_path = images.pop(0)
+                        img_path = os.path.join(folder, img_path)
+                    except IndexError:
+                        row.append("")  # No more images to add
+                        continue
 
-    for pdf_file in pdf_files:
-        try:
-            with open(pdf_file, "rb") as file:
-                pdf_reader = PyPDF2.PdfReader(file)
-                for page_num in pdf_reader.pages:
-                    pdf_writer.add_page(page_num)
-                    # Atualizado para add_page
-        except Exception as e:
-            print(f"Erro ao processar o arquivo {pdf_file}: {e}")
-            continue
-
-    with open(output_filename, "wb") as output_pdf:
-        pdf_writer.write(output_pdf)
-
-    print(f"PDFs unidos com sucesso em {output_filename}.")
+            
+                    img = Image.open(img_path)
+                    rl_img = rlImage(img_path)
 
 
-def check_folder():
-    try:
-        if not os.path.exists("Dicoms"):
-            os.mkdir("Dicoms")
-            print("Pasta criada DICOM criada com sucesso!")
+                    # Adjust the display size of the image in the PDF
+                    w_ratio = (cell_width - 2 * cell_padding) / img.size[0]
+                    h_ratio = (cell_height - 2 * cell_padding) / img.size[1]
+                    ratio = min(w_ratio, h_ratio)
+
+                    rl_img.drawHeight = img.size[1] * ratio
+                    rl_img.drawWidth = img.size[0] * ratio
+
+                    row.append(rl_img)
+
+                data.append(row)
+            return data
+               # Create the table
+
+        if len(images) <=8:
+            data = imager(data,images)
+            table = Table(data)
+            table.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+            pdf.build([table])
+            print(f"PDF criado com sucesso")
+
+                  
         else:
-            print("Pasta DICOM já existe!")
-        if not os.path.exists("Images"):
-            os.mkdir("Images")
-            print("Pasta criada jpeg criada com sucesso!")
-        else:
-            print("Pasta jpeg já existe!")
-    except Exception as e:
-        print(e)
+            half =images[:8]
+            data = imager(data,half)
+            other_half = images[8:]
+            data2 = imager(data2,other_half)
+
+            table = Table(data)
+            table.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+
+            table2 = Table(data2)
+            table2.setStyle(
+                TableStyle(
+                    [
+                        ("GRID", (0, 0), (-1, -1), 0, colors.transparent),
+                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                    ]
+                )
+            )
+            pdf.build([table,table2])
+            print(f"PDF criado com sucesso")
+    T()
+
+
 
 
 def Extract_Convert_Img(file: str):
@@ -115,39 +150,43 @@ def PDF_Process():
                 Extract_Convert_Img(f"{file}")
 
     except Exception as e:
-        print(e) #             print("Arquivo não encontrado!")
-    # finally:
-    #     #For each  PDF on mainfolder, merge with those with PDF of the same name in EXAMES
-    #     for file in os.listdir("ZIPS"):
-    #         if file.endswith(".pdf"):
-    #             for file2 in os.listdir("EXAMES"):
-    #                 if file2.endswith(".pdf"):
-    #                     MkPDF.MergePDF(f"{file}", f"{file2}")
+        print(e) 
+
+# ORTHANC
+from pyorthanc import Orthanc
+import time
+import json
+
+orthanc = Orthanc("http://usview.tech:8042", "orthanc", "orthanc")
+
+while True:
+    # Load pacientes atualizados
+    patients = None
+    with open('patients.json') as json_file:
+        patients = json.load(json_file)
+
+    # Atualização os pacientes
+    latest_patients = orthanc.get_patients()
+    if patients == latest_patients:
+        print("Nenhum novo paciente encontrado")
+        time.sleep(60)
+    else:
+        new_patients = [p for p in latest_patients if p not in patients]
+
+        # Processo para cada novo paciente
+        for patient in new_patients:
+            response = orthanc.get_patients_id_archive(str(patient))
+            with open(f"ZIPS/{patient}.zip", "wb") as f:
+                f.write(response)
+            Extract_Convert_Img(f"{patient}.zip")
+
+        # Atualizar pacientes
+        patients = latest_patients
 
 
+        
+        with open('patients.json', 'w') as json_file:
+            json.dump(patients, json_file)
 
-
-# GENERATE A FUNCTION DO MERGE TWO PDFS
-def MergePDF(file1, file2):
-    pdf1 = open(file1, "rb")
-    pdf2 = open(file2, "rb")
-    pdf1_reader = PyPDF2.PdfFileReader(pdf1)
-    pdf2_reader = PyPDF2.PdfFileReader(pdf2)
-    pdf_writer = PyPDF2.PdfFileWriter()
-    for page_num in range(pdf1_reader.numPages):
-        page = pdf1_reader.getPage(page_num)
-        pdf_writer.addPage(page)
-    for page_num in range(pdf2_reader.numPages):
-        page = pdf2_reader.getPage(page_num)
-        pdf_writer.addPage(page)
-    output = open(f"{file1}", "wb")
-    pdf_writer.write(output)
-    output.close()
-    pdf1.close()
-    pdf2.close()
-    print("PDFs merged successfully!")
-
-
-
-Change()
-PDF_Process()
+        # Esperar um momento (tempo em segundos) antes de verificar novamente
+        time.sleep(60)
