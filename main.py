@@ -142,15 +142,6 @@ def Extract_Convert_Img(file: str):
     print("Extração e conversão concluídas com sucesso!")
 
 
-def PDF_Process():
-    try:
-        for file in os.listdir("ZIPS"):
-            print(file)
-            if file.endswith(".zip"):
-                Extract_Convert_Img(f"{file}")
-
-    except Exception as e:
-        print(e) 
 
 # ORTHANC
 from pyorthanc import Orthanc
