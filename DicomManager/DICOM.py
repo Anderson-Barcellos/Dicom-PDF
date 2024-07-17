@@ -32,7 +32,7 @@ class DICOM2JPEG:
                     if not DICOM2JPEG.is_video_dicom(file_path):
                         ds = pydicom.dcmread(file_path)
                         if ds[(0x0028, 0x0004)].value == "YBR_FULL_422":
-                            image = Image.fromarray(ds.pixel_array, mode="YCbCr")
+                            image = Image.fromarray(ds.pixel_array, mode="YCbCr").convert("RGB"
                         elif ds[(0x0028, 0x0004)].value == "RGB":
                             image = Image.fromarray(ds.pixel_array, mode="RGB")
                         else:
