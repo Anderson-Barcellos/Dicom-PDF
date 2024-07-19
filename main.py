@@ -148,7 +148,7 @@ from pyorthanc import Orthanc
 import time
 import json
 
-orthanc = Orthanc("http://usview.tech:8042", "orthanc", "orthanc")
+orthanc = Orthanc("http://", "orthanc", "orthanc")
 
 while True:
     # Load pacientes atualizados
