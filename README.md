@@ -1,5 +1,5 @@
 # Dicom-PDF
-This module is designed to streamline the process of handling medical images by automating the download of DICOM files from an Orthanc server, converting these files into standard image formats, and compiling the images into a grid layout within a PDF document.  
+
 This module is designed to streamline the process of handling medical images by automating the download of DICOM files from an Orthanc server, converting these files into standard image formats, and compiling the images into a grid layout within a PDF document. This can be particularly useful for medical professionals who need to review and share complex imaging data efficiently.
 
 Features
