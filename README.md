@@ -107,3 +107,4 @@ This project processes ultrasound DICOM files, extracts images, generates organi
 
 This project provides a comprehensive solution for processing fetal ultrasound data, combining image analysis with advanced biometrical assessments. It offers healthcare professionals a powerful tool for monitoring fetal growth and development, enhancing the quality of prenatal care.
 
+![image](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
