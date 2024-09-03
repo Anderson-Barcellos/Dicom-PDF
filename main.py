@@ -6,7 +6,7 @@ from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 from PyPDF2 import PdfMerger
 
-path = "C:\\Users\\Administrador\\Desktop\\NEWDICOM\\Pacientes"
+path = "your path"
 
 def Merger(path:str):
     print("Analisando PDFs...")
@@ -97,7 +97,7 @@ from pyorthanc import Orthanc
 import time
 import json
 
-orthanc = Orthanc("http://170.238.45.149:8042", "orthanc", "orthanc")
+orthanc = Orthanc("yourserver", "orthanc", "orthanc")
 
 
 def connection():
