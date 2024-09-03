@@ -2,10 +2,18 @@ import pydicom
 from PIL import Image, ImageEnhance
 import os
 from pathlib import Path
-import traceback
 
 
 class DICOM2JPEG:
+    """ Classe para converter arquivos DICOM em JPEG.
+        ### Parâmetros:
+
+        - dcm_path: str
+            Caminho para a pasta contendo os arquivos DICOM.
+        - jpeg_path: str
+            Caminho para a pasta onde os arquivos JPEG serão salvos.
+
+    """
     @classmethod
     def is_video_dicom(cls, path):
         ds = pydicom.dcmread(path)
@@ -17,22 +25,28 @@ class DICOM2JPEG:
         if "ConversionType" in ds and ds.ConversionType == "DV":
             return True
         return False
+    
 
     def __init__(self, dcm_path, jpeg_path) -> None:
         self.dcm_path = Path(dcm_path)
         self.jpeg_path = Path(jpeg_path)
 
     def converter(self) -> None:
+        """ Método para converter arquivos DICOM em JPEG."""
         ds = None
         image = None
         try:
             for file in os.listdir(self.dcm_path):
-                if file.endswith(".dcm"):
+                #IMPLEMENTING THE SR DICOM EXTRACTION
+                if file.startswith("SR") and file.endswith(".dcm"):
+                    file_path = os.path.join(str(self.dcm_path), file)
+
+                else:
                     file_path = os.path.join(str(self.dcm_path), file)
                     if not DICOM2JPEG.is_video_dicom(file_path):
                         ds = pydicom.dcmread(file_path)
                         if ds[(0x0028, 0x0004)].value == "YBR_FULL_422":
-                            image = Image.fromarray(ds.pixel_array, mode="YCbCr").convert("RGB"
+                            image = Image.fromarray(ds.pixel_array, mode="YCbCr").convert('RGB')
                         elif ds[(0x0028, 0x0004)].value == "RGB":
                             image = Image.fromarray(ds.pixel_array, mode="RGB")
                         else:
@@ -45,7 +59,7 @@ class DICOM2JPEG:
                         image = enhancer.enhance(1)
                         # Aumento do brilho
                         enhancer = ImageEnhance.Brightness(image)
-                        image = enhancer.enhance(1)
+                        image = enhancer.enhance(2)
                         # Aumento da nitidez
                         enhancer = ImageEnhance.Sharpness(image)
                         image = enhancer.enhance(5)
@@ -57,7 +71,8 @@ class DICOM2JPEG:
         except Exception as e:
             print(e)
 
-    def eliminate_dcm(self):
+    def eliminate_dcm(self) -> None:
+        """ Método para eliminar pasta DICOM."""
         try:
             for file in os.listdir(self.dcm_path):
                 if file.endswith(".dcm"):
@@ -66,6 +81,7 @@ class DICOM2JPEG:
             print(e)
 
     def eliminate_jpeg(self):
+        """ Método para eliminar pasta Images."""
         try:
             for file in os.listdir(self.jpeg_path):
                 if file.endswith(".jpeg") or file.endswith(".jpg"):
@@ -74,14 +90,16 @@ class DICOM2JPEG:
             print(e)
 
     def eliminate_folders(self):
+        """ Método para eliminar pastas DICOM e Images."""
         try:
             self.eliminate_dcm()
             self.eliminate_jpeg()
 
         except Exception as e:
             print(e)
-    
+
     def eliminate_zips(self):
+        """ Método para eliminar arquivos da pasta ZIPS."""
         try:
             for file in os.listdir("ZIPS"):
                 if file.endswith(".zip"):

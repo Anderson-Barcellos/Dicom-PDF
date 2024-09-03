@@ -40,7 +40,9 @@ class Unzipper(object):
 
         self.path.extractall()
         members = self.path.namelist()
+        print("Members: ", members)
         name = self.name
+        print("Name: ", name)
 
         # Caminho do diretório atual
 
@@ -50,7 +52,7 @@ class Unzipper(object):
         i = 0
         for i in range(0, len(members)):
             src_dir = f"./{members[i]}"[0:-12]
-            print(src_dir)
+            print("Src_dir: ", src_dir)
             # Caminho completo do arquivo
             file = f"./{members[i].split(sep='/')[-1]}"
             src_file = os.path.join(src_dir, file)
@@ -58,3 +60,5 @@ class Unzipper(object):
             os.rename(f"{dst_dir}/{file}", f"{dst_dir}/{name}{i}.dcm")
             i += 1
         shutil.rmtree(name)
+
+
