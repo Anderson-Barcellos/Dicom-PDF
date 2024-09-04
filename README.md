@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project processes ultrasound DICOM files, extracts and converts DICOM files into images, Later, they are organized  in 4x2 gridlayout and burn them into a pdf page. ALso, in Obstetrical Exams you can create growth charts. It combines image processing with advanced biometrical analysis to provide a complete view of fetal development.
+This project processes ultrasound DICOM files, extracts and converts them  into images, Later, they are organized  in 4x2 gridlayout and burn them into a pdf page. ALso, in Obstetrical Exams you can create growth charts. It combines image processing with advanced biometrical analysis to provide a complete view of fetal development.
 
 ## Key Components
 
