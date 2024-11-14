@@ -13,6 +13,9 @@ class DICOM2JPEG:
         - jpeg_path: str
             Caminho para a pasta onde os arquivos JPEG serão salvos.
 
+
+
+
     """
     @classmethod
     def is_video_dicom(cls, path):
@@ -25,7 +28,6 @@ class DICOM2JPEG:
         if "ConversionType" in ds and ds.ConversionType == "DV":
             return True
         return False
-    
 
     def __init__(self, dcm_path, jpeg_path) -> None:
         self.dcm_path = Path(dcm_path)
@@ -36,37 +38,37 @@ class DICOM2JPEG:
         ds = None
         image = None
         try:
-            for file in os.listdir(self.dcm_path):
-                #IMPLEMENTING THE SR DICOM EXTRACTION
-                if file.startswith("SR") and file.endswith(".dcm"):
-                    file_path = os.path.join(str(self.dcm_path), file)
+            files = os.listdir(self.dcm_path)
+            for file in files:
+                if len(files) >=4 or len(files)<=2:
+                        
+                    if file.endswith(".dcm"):
+                        file_path = os.path.join(str(self.dcm_path), file)
+                        if not DICOM2JPEG.is_video_dicom(file_path):
+                            ds = pydicom.dcmread(file_path)
+                            if ds[(0x0028, 0x0004)].value == "YBR_FULL_422":
+                                image = Image.fromarray(ds.pixel_array, mode="YCbCr").convert("RGB")
+                               
+                            else:
+                                image = Image.fromarray(ds.pixel_array, mode="RGB").convert("RGB")
+                            # Normalização da imagem
+                            image = image.point(lambda x: x * 2)
 
-                else:
-                    file_path = os.path.join(str(self.dcm_path), file)
-                    if not DICOM2JPEG.is_video_dicom(file_path):
-                        ds = pydicom.dcmread(file_path)
-                        if ds[(0x0028, 0x0004)].value == "YBR_FULL_422":
-                            image = Image.fromarray(ds.pixel_array, mode="YCbCr").convert('RGB')
-                        elif ds[(0x0028, 0x0004)].value == "RGB":
-                            image = Image.fromarray(ds.pixel_array, mode="RGB")
-                        else:
-                            image = Image.fromarray(ds.pixel_array, mode="L")
-                        # Normalização da imagem
-                        image = image.point(lambda x: x * 1)
+                            # Aumento do contraste
+                            enhancer = ImageEnhance.Contrast(image)
+                            image = enhancer.enhance(1)
+                            # Aumento do brilho
+                            enhancer = ImageEnhance.Brightness(image)
+                            image = enhancer.enhance(2)
+                            # Aumento da nitidez
+                            enhancer = ImageEnhance.Sharpness(image)
+                            image = enhancer.enhance(1.7)
 
-                        # Aumento do contraste
-                        enhancer = ImageEnhance.Contrast(image)
-                        image = enhancer.enhance(1)
-                        # Aumento do brilho
-                        enhancer = ImageEnhance.Brightness(image)
-                        image = enhancer.enhance(2)
-                        # Aumento da nitidez
-                        enhancer = ImageEnhance.Sharpness(image)
-                        image = enhancer.enhance(5)
-
-                        # Aumento do contraste
-                        nfile = file.replace(".dcm", ".jpeg")
-                        image.save(os.path.join(str(self.jpeg_path), nfile))
+                            # Aumento do contraste
+                            nfile = file.replace(".dcm", ".jpeg")
+                            image.save(os.path.join(str(self.jpeg_path), nfile))
+     
+		    
 
         except Exception as e:
             print(e)
@@ -106,5 +108,3 @@ class DICOM2JPEG:
                     os.remove(os.path.join("ZIPS", file))
         except Exception as e:
             print(e)
-
-

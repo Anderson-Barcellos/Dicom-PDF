@@ -4,55 +4,46 @@ import os
 from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
-from PyPDF2 import PdfMerger
+import time
 
-path = "your path"
+import win32print
+import win32api
+import os
 
-def Merger(path:str):
-    print("Analisando PDFs...")
-    path = path
+def sleep_with_while(seconds):
+    start_time = time.time()  # Tempo inicial
+    while time.time() - start_time < seconds:
+        elapsed_time = time.time() - start_time
+        remaining_time = seconds - elapsed_time
+        print(f"Faltam {int(remaining_time)} segundos...")
+        time.sleep(1)  # Aguardar um segundo entre cada iteração
+    print("Tempo finalizado!")
+
+
+
+def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
+    # Verifica se o arquivo especificado existe
+    if not os.path.exists(path_arquivo):
+        print(f"Arquivo não encontrado: {path_arquivo}")
+        return
+    
+    # Obtém a impressora padrão se nenhuma impressora for especificada
+    if nome_impressora is None:
+        nome_impressora = win32print.GetDefaultPrinter()
+
+    # Envia o arquivo para a impressora
     try:
-        prefixes = set()
-        pdf_pairs = []
-
-        # Identificar os prefixos dos arquivos
-        for file in os.listdir(path):
-            if " " in file:
-                prefix = file.split(" ")[0]
-                prefixes.add(prefix)
-
-        # Verificar se os arquivos de cada prefixo existem
-        for prefix in prefixes:
-            pdf1 = f"{prefix}.pdf"
-            pdf2 = None
-            for file in os.listdir(path):
-                if file.startswith(prefix) and " " in file:
-                    pdf2 = file
-                    break
-            if (
-                pdf2
-                and os.path.exists(os.path.join(path, pdf1))
-                and os.path.exists(os.path.join(path, pdf2))
-            ):
-                pdf_pairs.append((pdf1, pdf2))
-
-        # Realizar a fusão dos arquivos PDF
-        for pdf1, pdf2 in pdf_pairs:
-            if os.path.exists(f"Laudo_{pdf2[:-4]}.pdf"):
-                print("Nada a unir!")
-                continue
-            else:
-                output_filename = f"Laudo_{pdf2[:-4]}.pdf"
-                merger = PdfMerger()
-                merger.append(os.path.join(path, pdf1))
-                merger.append(os.path.join(path, pdf2))
-                merger.write(output_filename)
-                merger.close()
-
-            print("PDFs Unidos!")
+        win32api.ShellExecute(
+            0,
+            "print",
+            path_arquivo,
+            f'"{nome_impressora}"',
+            ".",
+            0
+        )
+        print(f"Arquivo {path_arquivo} enviado para a impressora {nome_impressora}.")
     except Exception as e:
-        print(e)
-
+        print(f"Erro ao imprimir o arquivo: {e}")
 
 def Extract_Convert_Img(file: str):
     """Function to extract and convert DICOM images to JPEG format.
@@ -68,28 +59,14 @@ def Extract_Convert_Img(file: str):
     dicom2jpeg.converter()
     MkPDF(name)
     dicom2jpeg.eliminate_folders()
-    # Test for a any other pdf file on the current folder
+    
+    return f"{name}.pdf"[15:]
 
-    print("Extração e conversão concluídas com sucesso!")
+        
+    #Test for a any other pdf file on the current folder
 
+    print("Extração e conversão concluídas com sucesso, Anders!")
 
-def ExtractSR(file: str):
-    """Function to extract and convert DICOM images to JPEG format.
-    #### Parameters:
-    - file: str
-        Name of the ZIP file containing the DICOM images."""
-    # Extract the file
-    unzipper = Unzipper(f"{file}", "./Dicoms")
-    unzipper.unzipper()
-    name = unzipper.name
-    print(name)
-    dicom2jpeg = DICOM2JPEG("./Dicoms", "./Images")
-    dicom2jpeg.converter()
-    MkPDF(name)
-    dicom2jpeg.eliminate_folders()
-    # Test for a any other pdf file on the current folder
-
-    print("Extração e conversão concluídas com sucesso!")
 
 
 # ORTHANC
@@ -97,57 +74,42 @@ from pyorthanc import Orthanc
 import time
 import json
 
-orthanc = Orthanc("yourserver", "orthanc", "orthanc")
 
 
-def connection():
-    max_attempts = 5  # Número máximo de tentativas antes de abortar
-    attempt = 0
+orthanc = Orthanc("", "orthanc", "orthanc")
+try:
     while True:
-        try:
-            while True:
-                # Load pacientes atualizados
-                patients = None
-                with open("patients.json") as json_file:
-                    patients = json.load(json_file)
+        # Load pacientes atualizados
+        patients = None
+        with open('patients.json') as json_file:
+            patients = json.load(json_file)
 
-                # Atualização os pacientes
-                latest_patients = orthanc.get_patients()
+        # Atualização os pacientes
+        latest_patients = orthanc.get_patients()
+        if patients == latest_patients:
+            print("Nenhum novo paciente encontrado, Anders.... Procurando")
+            sleep_with_while(20)
+        else:
+            new_patients = [p for p in latest_patients if p not in patients]
 
-                if patients == latest_patients:
-                    print("Nenhum novo paciente encontrado")
-                    Merger(path)
-                    time.sleep(15)
-                else:
-                    new_patients = [p for p in latest_patients if p not in patients]
+            # Processo para cada novo paciente
+            for patient in new_patients:
+                response = orthanc.get_patients_id_archive(str(patient))
+                with open(f"ZIPS/{patient}.zip", "wb") as f:
+                    f.write(response)
+                imprimir_arquivo(Extract_Convert_Img(f"{patient}.zip"))
+                
+    
 
-                    # Processo para cada novo paciente
-                    for patient in new_patients:
-
-                        response = orthanc.get_patients_id_archive(str(patient))
-                        print(f"Baixando paciente {patient}...")
-                        with open(f"ZIPS/{patient}.zip", "wb") as f:
-                            f.write(response)
-                        Extract_Convert_Img(f"{patient}.zip")
-
-                    # Atualizar pacientes
-                    patients = latest_patients
-
-                    with open("patients.json", "w") as json_file:
-                        json.dump(patients, json_file)
-
-                    # Esperar um momento (tempo em segundos) antes de verificar novamente
-                    time.sleep(15)
-        except Exception as e:
-            attempt += 1
-            print(f"Ocorreu um erro: {e}. Tentativa {attempt} de {max_attempts}")
-            if attempt >= max_attempts:
-                print("Número máximo de tentativas atingido. Abortando.")
-
-                break
-            else:
-                connection()
-                time.sleep(5)  # Pequeno delay antes de tentar novamente
+            # Atualizar pacientes
+            patients = latest_patients
 
 
-connection()
+
+            with open('patients.json', 'w') as json_file:
+                json.dump(patients, json_file)
+            
+            # Esperar um momento (tempo em segundos) antes de verificar novamente
+            sleep_with_while(15)
+except Exception as e:
+    print(e)
