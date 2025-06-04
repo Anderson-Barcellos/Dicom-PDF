@@ -46,10 +46,20 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
         print(f"Erro ao imprimir o arquivo: {e}")
 
 def Extract_Convert_Img(file: str):
-    """Function to extract and convert DICOM images to JPEG format.
-    #### Parameters:
-    - file: str
-        Name of the ZIP file containing the DICOM images."""
+    """Extrai imagens DICOM, converte-as e gera relatórios.
+
+    Parameters
+    ----------
+    file : str
+        Nome do arquivo ZIP que contém as imagens DICOM.
+
+    Returns
+    -------
+    str
+        Caminho do PDF criado a partir das imagens. Após sua geração, um
+        processo de OCR pode ser executado para criar o arquivo de texto
+        correspondente.
+    """
     # Extract the file
     unzipper = Unzipper(f"{file}", "./Dicoms")
     unzipper.unzipper()
