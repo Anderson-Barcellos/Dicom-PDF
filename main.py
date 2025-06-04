@@ -5,6 +5,7 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 import time
+from utils.ocr import extract_ultrasound_text
 
 import win32print
 import win32api
