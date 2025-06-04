@@ -5,8 +5,7 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 import time
-#codex/criar-função-para-extrair-texto-de-ultrassom
-from extract_ultrasound_text import extract_ultrasound_text
+from utils.ocr import extract_ultrasound_text
 =======
 from utils.ocr import extract_ultrasound_text
 # main
