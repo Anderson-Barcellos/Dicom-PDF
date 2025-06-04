@@ -107,7 +107,7 @@ def MkPDF(name: str):
                 )
             )
             pdf.build([table])
-            print(f"PDF criado com sucesso")
+            print("PDF criado com sucesso")
 
         else:
             half = images[:8]
@@ -135,7 +135,7 @@ def MkPDF(name: str):
                 )
             )
             pdf.build([table, table2])
-            print(f"PDF criado com sucesso")
+            print("PDF criado com sucesso")
     import shutil
     from pathlib import Path
     #set for main.py directory relative path with .
