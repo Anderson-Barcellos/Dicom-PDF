@@ -238,11 +238,12 @@ def save_to_txt_report(name, measurements) -> None:
     print(f"Total de {len(measurements)} medidas foram salvas em report.txt.")
 
 
-print(pydicom.dcmread("SR.dcm").get_item((0x0040, 0xA121)))
-ds = pydicom.dcmread("SR.dcm").ContentSequence
-measurements, biometrical_data = ExtractSR(ds)
-print(measurements)
-biometrical_data = extract_biometrical_data(biometrical_data)
+if __name__ == "__main__":
+    print(pydicom.dcmread("SR.dcm").get_item((0x0040, 0xA121)))
+    ds = pydicom.dcmread("SR.dcm").ContentSequence
+    measurements, biometrical_data = ExtractSR(ds)
+    print(measurements)
+    biometrical_data = extract_biometrical_data(biometrical_data)
 
-plot_biometrical_data(biometrical_data)
-pdf_report("report", measurements, biometrical_data)
+    plot_biometrical_data(biometrical_data)
+    pdf_report("report", measurements, biometrical_data)
