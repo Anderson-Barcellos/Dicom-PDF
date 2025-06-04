@@ -112,6 +112,23 @@ from reportlab.lib.enums import TA_LEFT
 
 
 def pdf_report(name, measurements, biometrical_data):
+    """Gera o relatório em PDF a partir dos dados biométricos coletados.
+
+    Parameters
+    ----------
+    name : str
+        Nome base do relatório gerado.
+    measurements : list
+        Lista de medições extraídas do DICOM.
+    biometrical_data : dict
+        Valores numéricos que alimentam os gráficos de crescimento fetal.
+
+    Returns
+    -------
+    None
+        O PDF é salvo em ``{name}_report.pdf`` e, em seguida, o texto é extraído
+        via OCR para criar ``{name}_report.txt``.
+    """
     story = []
     doc = SimpleDocTemplate(
         f"{name}_report.pdf",
@@ -192,12 +209,20 @@ def pdf_report(name, measurements, biometrical_data):
 
 
 def save_to_txt_report(name, measurements) -> None:
-    """
-    Save the measurements to a text file.
-    ### Parameters
+    """Salva as medições em um arquivo ``.txt`` gerado por OCR.
 
-    - name (str):
-        The name of the report file.
+    Parameters
+    ----------
+    name : str
+        Nome base do relatório.
+    measurements : list
+        Lista de tuplas contendo a descrição, o valor e a unidade de cada
+        medição.
+
+    Returns
+    -------
+    None
+        Gera ``{name}_report.txt`` com o conteúdo extraído do PDF por OCR.
     """
     with open(f"{name}_report.txt", "w") as f:
         f.write("Relatório de Medições DICOM SR\n")
