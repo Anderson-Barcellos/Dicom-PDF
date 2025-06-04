@@ -1,0 +1,8 @@
+pydicom
+Pillow
+matplotlib
+reportlab
+opencv-python
+pytesseract
+pyorthanc
+pywin32
