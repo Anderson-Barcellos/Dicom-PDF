@@ -20,7 +20,7 @@ class Unzipper(object):
 
     """
 
-    internal_path = f"/Unknown Study/US/"
+    internal_path = "/Unknown Study/US/"
 
     def __init__(self, path: str, folder: str) -> None:
         self.path = zipfile.ZipFile(f"ZIPS/{path}")
