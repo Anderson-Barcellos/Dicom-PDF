@@ -1,7 +1,8 @@
 from PIL import Image
 import os
 from fpdf import FPDF
-import PyPDF2
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # Configurações da página A4
