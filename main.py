@@ -5,6 +5,7 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 import time
+from extract_ultrasound_text import extract_ultrasound_text
 
 import win32print
 import win32api
@@ -57,9 +58,20 @@ def Extract_Convert_Img(file: str):
     print(name)
     dicom2jpeg = DICOM2JPEG("./Dicoms", "./Images")
     dicom2jpeg.converter()
+
+    # Realiza OCR nas imagens convertidas antes de removê-las
+    os.makedirs("Pacientes", exist_ok=True)
+    txt_path = os.path.join("Pacientes", f"{name[15:]}.txt")
+    with open(txt_path, "w", encoding="utf-8") as txt_file:
+        for img in os.listdir("./Images"):
+            if img.lower().endswith(('.jpeg', '.jpg', '.png', '.bmp')):
+                img_path = os.path.join("./Images", img)
+                text, _ = extract_ultrasound_text(img_path)
+                txt_file.write(f"# {img}\n{text}\n")
+
     MkPDF(name)
     dicom2jpeg.eliminate_folders()
-    
+
     return f"{name}.pdf"[15:]
 
         
