@@ -8,7 +8,6 @@ import time
 
 import win32print
 import win32api
-import os
 
 def sleep_with_while(seconds):
     start_time = time.time()  # Tempo inicial
