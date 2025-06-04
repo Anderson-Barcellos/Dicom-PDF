@@ -6,7 +6,10 @@ from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 import time
 from utils.ocr import extract_ultrasound_text
-=======
+
+#codex/criar-função-para-extrair-texto-de-ultrassom
+from extract_ultrasound_text import extract_ultrasound_text
+
 from utils.ocr import extract_ultrasound_text
 # main
 
