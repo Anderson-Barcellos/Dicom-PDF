@@ -84,7 +84,7 @@ def Extract_Convert_Img(file: str):
                 txt_file.write(f"# {img}\n{text}\n")
 
     MkPDF(name)
-    dicom2jpeg.eliminate_folders()
+    dicom2jpeg.eliminate_all()
 
     return f"{name}.pdf"[15:]
 
