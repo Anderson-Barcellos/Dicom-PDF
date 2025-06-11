@@ -40,7 +40,6 @@ def extract_ultrasound_text(
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
         raise FileNotFoundError(f"Não achei {image_path}")
-    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
     # 2. detecção de molduras escuras
     rows, cols = gray.shape

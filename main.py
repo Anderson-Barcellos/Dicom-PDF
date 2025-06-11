@@ -5,11 +5,10 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
 import time
-from utils.ocr import extract_ultrasound_text
+
 
 from extract_ultrasound_text import extract_ultrasound_text
 
-from utils.ocr import extract_ultrasound_text
 
 
 import win32print
@@ -27,11 +26,34 @@ def sleep_with_while(seconds):
 
 
 def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
-    # Verifica se o arquivo especificado existe
+    """
+    🖨️ Função de Impressão de Arquivo
+
+    Função para enviar um arquivo para impressão em uma impressora específica no Windows.
+
+    📥 Parâmetros:
+    :param path_arquivo: 📄 Caminho do arquivo a ser impresso.
+    :type path_arquivo: str
+    :param nome_impressora: 🖨️ Nome da impressora a ser utilizada. Se None, utiliza a impressora padrão.
+    :type nome_impressora: str, optional
+
+    :return: None
+
+    :raises FileNotFoundError: ❌ Se o arquivo especificado não for encontrado.
+    :raises Exception: ⚠️ Se ocorrer um erro ao enviar o arquivo para a impressora.
+
+    🧑‍💻 Exemplo:
+    ```python
+
+        imprimir_arquivo("relatorio.pdf")
+        imprimir_arquivo("imagem.jpg", nome_impressora="Minha Impressora")
+    ```
+
+    """
     if not os.path.exists(path_arquivo):
         print(f"Arquivo não encontrado: {path_arquivo}")
         return
-    
+
     # Obtém a impressora padrão se nenhuma impressora for especificada
     if nome_impressora is None:
         nome_impressora = win32print.GetDefaultPrinter()
@@ -88,7 +110,7 @@ def Extract_Convert_Img(file: str):
 
     return f"{name}.pdf"[15:]
 
-        
+
     #Test for a any other pdf file on the current folder
 
     print("Extração e conversão concluídas com sucesso, Anders!")
@@ -124,8 +146,8 @@ try:
                 with open(f"ZIPS/{patient}.zip", "wb") as f:
                     f.write(response)
                 imprimir_arquivo(Extract_Convert_Img(f"{patient}.zip"))
-                
-    
+
+
 
             # Atualizar pacientes
             patients = latest_patients
@@ -134,7 +156,7 @@ try:
 
             with open('patients.json', 'w') as json_file:
                 json.dump(patients, json_file)
-            
+
             # Esperar um momento (tempo em segundos) antes de verificar novamente
             sleep_with_while(15)
 except Exception as e:
