@@ -75,6 +75,43 @@ It combines image processing with advanced biometrical analysis to provide a com
 - numpy: For numerical operations
 - scipy: For interpolation in growth charts
 
+### Development Environment
+
+This repository includes an optional Conda configuration. To create the
+environment and install Python and Node.js dependencies, run:
+
+```bash
+conda env create -f environment.yml
+conda activate dicom-pdf
+npm install --prefix webapp
+```
+
+You can then build the frontend and execute the main script or run your tests.
+
+### Docker Setup
+
+To build a Docker image that includes the compiled interface and all Python
+dependencies, run from the repository root:
+
+```bash
+docker build -t dicom-pdf .
+```
+
+Execute the container with:
+
+```bash
+docker run --rm -p 4173:4173 dicom-pdf
+```
+
+Once started, the project runs `main.py`. To preview the web interface without
+containerization, run:
+
+```bash
+npm run preview --prefix webapp
+```
+
+The frontend will be available at [http://localhost:4173](http://localhost:4173).
+
 ### Data Processing
 
 - Extracts and processes various fetal measurements:
