@@ -5,3 +5,4 @@ reportlab
 opencv-python
 pytesseract
 pyorthanc
+pywin32

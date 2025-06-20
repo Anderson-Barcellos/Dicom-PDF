@@ -75,6 +75,12 @@ It combines image processing with advanced biometrical analysis to provide a com
 - numpy: For numerical operations
 - scipy: For interpolation in growth charts
 
+### Printing Support (Windows Only)
+
+The automatic printing feature relies on the `pywin32` library. Printing from
+`main.py` is therefore available only on Windows systems. Users on other
+platforms should generate the PDF and print it manually.
+
 ### Development Environment
 
 This repository includes an optional Conda configuration. To create the
