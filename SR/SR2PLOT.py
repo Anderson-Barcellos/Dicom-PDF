@@ -1,7 +1,6 @@
 from scipy.interpolate import make_interp_spline
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 
 def create_other_plots(biometria, value, week):
@@ -20,7 +19,8 @@ def create_other_plots(biometria, value, week):
     plt.rcParams['font.size'] = 8  # Adjust this value as needed
 
     # Create the figure and axis objects
-    fig, ax = plt.subplots(figsize=(11.69, 8.27), facecolor="#1a1a2e", dpi=300)  # A4 size in inches
+    fig, ax = plt.subplots(figsize=(11.69, 8.27),
+                           facecolor="#1a1a2e", dpi=300)  # A4 size in inches
     ax.set_facecolor("#1a1a2e")
 
     # Calculate approximate standard deviations
@@ -68,15 +68,19 @@ def create_other_plots(biometria, value, week):
     )
 
     # Customize the plot
-    ax.set_xlabel("Semanas de Gestacao", fontsize=14, fontweight="bold", color="white", labelpad=12)
-    ax.set_ylabel(f"{biometria} (mm)", fontsize=14, fontweight="bold", color="white", labelpad=12)
-    ax.set_title(f"{biometria} por Semana de Gestacao", fontsize=14, fontweight="bold", color="white", pad=20)
+    ax.set_xlabel("Semanas de Gestacao", fontsize=14,
+                  fontweight="bold", color="white", labelpad=12)
+    ax.set_ylabel(f"{biometria} (mm)", fontsize=14,
+                  fontweight="bold", color="white", labelpad=12)
+    ax.set_title(f"{biometria} por Semana de Gestacao",
+                 fontsize=14, fontweight="bold", color="white", pad=20)
 
     # Customize ticks
     ax.tick_params(axis='both', which='major', labelsize=8, colors="white")
 
     # Customize legend
-    legend = ax.legend(loc="upper left", fontsize=8, frameon=True, facecolor="#1a1a2e", edgecolor="white")
+    legend = ax.legend(loc="upper left", fontsize=8,
+                       frameon=True, facecolor="#1a1a2e", edgecolor="white")
     for text in legend.get_texts():
         text.set_color("white")
 

@@ -1,18 +1,18 @@
+import json
+import os
+import time
+from pyorthanc import Orthanc
 from DicomManager.unzip import Unzipper
 from DicomManager.DICOM import DICOM2JPEG
-import os
-from reportlab.platypus import Image as rlImage
-from reportlab.lib import colors
 from PDFMAKER.pdfmaker import MkPDF
-import time
 
 
 from extract_ultrasound_text import extract_ultrasound_text
 
 
-
 import win32print
 import win32api
+
 
 def sleep_with_while(seconds):
     start_time = time.time()  # Tempo inicial
@@ -22,7 +22,6 @@ def sleep_with_while(seconds):
         print(f"Faltam {int(remaining_time)} segundos...")
         time.sleep(1)  # Aguardar um segundo entre cada iteração
     print("Tempo finalizado!")
-
 
 
 def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
@@ -68,9 +67,11 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
             ".",
             0
         )
-        print(f"Arquivo {path_arquivo} enviado para a impressora {nome_impressora}.")
+        print(
+            f"Arquivo {path_arquivo} enviado para a impressora {nome_impressora}.")
     except Exception as e:
         print(f"Erro ao imprimir o arquivo: {e}")
+
 
 def Extract_Convert_Img(file: str):
     """Extrai imagens DICOM, converte-as e gera relatórios.
@@ -110,18 +111,12 @@ def Extract_Convert_Img(file: str):
 
     return f"{name}.pdf"[15:]
 
-
-    #Test for a any other pdf file on the current folder
+    # Test for a any other pdf file on the current folder
 
     print("Extração e conversão concluídas com sucesso, Anders!")
 
 
-
 # ORTHANC
-from pyorthanc import Orthanc
-import time
-import json
-
 
 
 orthanc = Orthanc("", "orthanc", "orthanc")
@@ -147,12 +142,8 @@ try:
                     f.write(response)
                 imprimir_arquivo(Extract_Convert_Img(f"{patient}.zip"))
 
-
-
             # Atualizar pacientes
             patients = latest_patients
-
-
 
             with open('patients.json', 'w') as json_file:
                 json.dump(patients, json_file)

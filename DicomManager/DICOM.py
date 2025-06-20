@@ -94,16 +94,21 @@ class DICOM2JPEG:
                 img = self._dicom_to_pil(ds)
 
                 # Realces opcionais
-                img = ImageEnhance.Brightness(img).enhance(self.enhancements['brightness'])
-                img = ImageEnhance.Color(img).enhance(self.enhancements['color'])
-                img = ImageEnhance.Contrast(img).enhance(self.enhancements['contrast'])
-                img = ImageEnhance.Sharpness(img).enhance(self.enhancements['sharpness'])
+                img = ImageEnhance.Brightness(img).enhance(
+                    self.enhancements['brightness'])
+                img = ImageEnhance.Color(img).enhance(
+                    self.enhancements['color'])
+                img = ImageEnhance.Contrast(img).enhance(
+                    self.enhancements['contrast'])
+                img = ImageEnhance.Sharpness(img).enhance(
+                    self.enhancements['sharpness'])
 
                 # Correção de gamma para nivel de preto mais claro
                 img = self.gamma_correction(img, self.black_gamma)
 
                 output = file.replace('.dcm', '.jpeg')
-                img.save(self.jpeg_path / output, 'JPEG', quality=self.jpeg_quality)
+                img.save(self.jpeg_path / output, 'JPEG',
+                         quality=self.jpeg_quality)
 
             except Exception as e:
                 print(f'[ERRO] {file}: {e}')
@@ -154,4 +159,3 @@ class DICOM2JPEG:
             arr /= arr.max()
         arr = (arr * 255).astype(np.uint8)
         return Image.fromarray(arr, mode='L').convert('RGB')
-

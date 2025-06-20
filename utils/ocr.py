@@ -40,6 +40,7 @@ def extract_ultrasound_text(
     img_bgr = cv2.imread(image_path)
     if img_bgr is None:
         raise FileNotFoundError(f"Não achei {image_path}")
+    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY)
 
     # 2. detecção de molduras escuras
     rows, cols = gray.shape
@@ -68,11 +69,11 @@ def extract_ultrasound_text(
     # 6. pares "rótulo-número"
     findings: Dict[str, float] = {}
     for line in raw_text.splitlines():
-        match = re.search(r"([A-Za-z0-9]+)\s*[:=]?\s*([0-9]+[.,]?[0-9]*)", line)
+        match = re.search(
+            r"([A-Za-z0-9]+)\s*[:=]?\s*([0-9]+[.,]?[0-9]*)", line)
         if match:
             key = match.group(1)
             value = float(match.group(2).replace(',', '.'))
             findings[key] = value
 
     return raw_text, findings
-

@@ -1,11 +1,11 @@
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
+from reportlab.lib.units import mm
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
-from reportlab.lib.pagesizes import letter, A4
 from typing import List, Dict, Tuple
 from SR2PLOT import create_other_plots
 import pydicom
-from typing import Any
-import os
 
 
 def extract_biometrical_data(data):
@@ -67,7 +67,8 @@ def ExtractSR(sequence, level=4) -> Tuple[List, Dict]:
                 .CodeMeaning
             )
 
-            measurements.append((f"{concept_name}: {numeric_value}{unit_code}", level))
+            measurements.append(
+                (f"{concept_name}: {numeric_value}{unit_code}", level))
             biometrical_data[concept_name] = numeric_value
         elif item.ValueType == "CONTAINER" and hasattr(item, "ContentSequence"):
 
@@ -102,13 +103,6 @@ def plot_biometrical_data(biometrical_data):
             create_other_plots(mapping[biometry], 10 * value, weeks)
         elif biometry == "Estimated Weight" and biometry != "Composite Ultrasound Age":
             create_other_plots("Peso Fetal Estimado (EFW)", value, weeks)
-
-
-from reportlab.lib.units import mm
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Image
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_LEFT
 
 
 def pdf_report(name, measurements, biometrical_data):
@@ -229,10 +223,8 @@ def save_to_txt_report(name, measurements) -> None:
         f.write("=" * 30 + "\n\n")
 
         for concept_name, numeric_value, unit_code, level in measurements:
-            indent = " " * (
-                level * 4
-            )  # Indenta com base no nível (usa 4 espaços por nível)
-            text = f"{concept_name}: {numeric_value} {unit_code}\n"
+            indent = " " * (level * 4)
+            text = f"{indent}{concept_name}: {numeric_value} {unit_code}\n"
             f.write(text)
 
     print(f"Total de {len(measurements)} medidas foram salvas em report.txt.")
