@@ -79,7 +79,8 @@ def Make_PDF():
     pdf.output("imagens_organizadas.pdf")
 
 
-Make_PDF()
+if __name__ == "__main__":
+    Make_PDF()
 
 
 def create_percentile_plot(plots_data, output_plot):
