@@ -11,10 +11,10 @@ console = Console()
 
 def log_error_with_locals(exception: Exception, locals_data):
     console.print("An error occurred:", style="bold red")
-    traceback_table = tabulate(
+    _ = tabulate(
         locals_data.items(), headers=["Variable", "Value"], tablefmt="grid"
     )
-    #console.print(traceback_table)
+    # console.print(_)
     console.print_exception()
 
 

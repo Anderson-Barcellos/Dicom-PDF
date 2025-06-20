@@ -1,4 +1,8 @@
+import { useState } from 'react'
 import StudyList from './components/StudyList/StudyList'
+import PdfPreview from './components/PdfPreview/PdfPreview'
+import MedicalReportView from './components/MedicalReport/MedicalReport'
+
 import type { Study, MedicalReport } from './types/dicom.types'
 
 const mockStudies: Study[] = [
@@ -28,9 +32,20 @@ const mockReport: MedicalReport = {
 }
 
 function App() {
+  const [selected, setSelected] = useState<Study | null>(null)
+
   return (
+
     <div className="p-4 text-white bg-gray-800 min-h-screen">
       <StudyList studies={mockStudies} report={mockReport} />
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 text-white bg-gray-800 min-h-screen">
+      <StudyList studies={mockStudies} selected={selected} onSelect={setSelected} />
+      {selected && (
+        <>
+          <PdfPreview src="/vite.svg" />
+          <MedicalReportView report={mockReport} />
+        </>
+      )}
     </div>
   )
 }

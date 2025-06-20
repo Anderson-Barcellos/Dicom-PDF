@@ -7,7 +7,11 @@ from reportlab.lib import colors
 
 
 def MkPDF(name: str):
-    """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page.
+    """Create a PDF from images.
+
+    The images are added without resizing but their display size is adjusted to
+    fit the page.
+
     #### Parametros:
     - name: str
         Nome do arquivo PDF que conterá as imagens.
@@ -138,7 +142,7 @@ def MkPDF(name: str):
             print("PDF criado com sucesso")
     import shutil
     from pathlib import Path
-    #set for main.py directory relative path with .
+    # set for main.py directory relative path with .
     os.chdir(".")
     if Path(f"{name[15:]}.pdf").exists():
         shutil.move(f"{name[15:]}.pdf", f"Pacientes/{name[15:]}.pdf")
