@@ -34,7 +34,7 @@ def Make_PDF():
     ]
 
     # Divide as imagens em grupos de 8
-    chunks = [images[i : i + 8] for i in range(0, len(images), 8)]
+    chunks = [images[i: i + 8] for i in range(0, len(images), 8)]
 
     for chunk in chunks:
         pdf.add_page()
@@ -49,7 +49,8 @@ def Make_PDF():
         # Adiciona as imagens ao PDF, mantendo a proporção
         for i, image_path in enumerate(chunk):
             img = Image.open(image_path)
-            img_width_mm, img_height_mm = img.size[0] / MM_TO_PX, img.size[1] / MM_TO_PX
+            img_width_mm, img_height_mm = img.size[0] / \
+                MM_TO_PX, img.size[1] / MM_TO_PX
 
             # Mantém a proporção da imagem
             scale_factor = min(
@@ -66,7 +67,8 @@ def Make_PDF():
             )
             y = (
                 SPACING_VERTICAL_MM
-                + (i // IMAGES_PER_ROW) * (image_height_mm + SPACING_VERTICAL_MM)
+                + (i // IMAGES_PER_ROW) *
+                (image_height_mm + SPACING_VERTICAL_MM)
                 + (image_height_mm - new_height_mm) / 4
             )
 
@@ -77,13 +79,18 @@ def Make_PDF():
     pdf.output("imagens_organizadas.pdf")
 
 
-Make_PDF()
+if __name__ == "__main__":
+    Make_PDF()
+
 
 def create_percentile_plot(plots_data, output_plot):
     weeks = np.arange(20, 40, 2)  # Semanas de gestação
-    percentil_3 = np.array([150, 250, 400, 650, 950, 1350, 1800, 2300, 2700, 3100])
-    percentil_50 = np.array([200, 350, 550, 900, 1300, 1750, 2300, 2800, 3300, 3800])
-    percentil_97 = np.array([250, 450, 700, 1150, 1600, 2200, 2700, 3200, 3700, 4200])
+    percentil_3 = np.array(
+        [150, 250, 400, 650, 950, 1350, 1800, 2300, 2700, 3100])
+    percentil_50 = np.array(
+        [200, 350, 550, 900, 1300, 1750, 2300, 2800, 3300, 3800])
+    percentil_97 = np.array(
+        [250, 450, 700, 1150, 1600, 2200, 2700, 3200, 3700, 4200])
 
     plt.figure(figsize=(10, 6))
 

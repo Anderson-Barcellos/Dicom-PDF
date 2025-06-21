@@ -5,4 +5,8 @@ reportlab
 opencv-python
 pytesseract
 pyorthanc
+fpdf
+rich
+tabulate
+scipy
 pywin32
