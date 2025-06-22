@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTabManager } from '../../hooks/useTabManager';
 import { usePatientStore } from '../../stores/patientStore';
 import type { PatientStudy } from '../../types/dicom.types';
@@ -11,7 +11,6 @@ interface TabBarProps {
 export default function TabBar({ className = '', onAddTabClick }: TabBarProps) {
   const { 
     tabs, 
-    activeTabId, 
     switchToTab, 
     closeTab, 
     getTabTitle, 
@@ -38,8 +37,9 @@ export default function TabBar({ className = '', onAddTabClick }: TabBarProps) {
     }
   };
 
+  const { openTab } = useTabManager();
+
   const handlePatientSelect = (patient: PatientStudy) => {
-    const { openTab } = useTabManager();
     openTab(patient);
     setShowPatientDropdown(false);
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useTabManager } from '../../hooks/useTabManager';
 import PatientTab from '../PatientTab/PatientTab';
 

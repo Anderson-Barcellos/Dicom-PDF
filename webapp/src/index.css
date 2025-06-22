@@ -1,3 +1,7 @@
+/* Import custom medical interface styles */
+@import './styles/medical-ui.css';
+@import './styles/a4-layouts.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -59,7 +59,9 @@ export function useDicomPdf(options: UseDicomPdfOptions = {}) {
           // Limit cache size
           if (newCache.size > cacheSize) {
             const firstKey = newCache.keys().next().value;
-            newCache.delete(firstKey);
+            if (firstKey) {
+              newCache.delete(firstKey);
+            }
           }
           
           return newCache;
@@ -113,7 +115,9 @@ export function useDicomPdf(options: UseDicomPdfOptions = {}) {
               
               if (newCache.size > cacheSize) {
                 const firstKey = newCache.keys().next().value;
-                newCache.delete(firstKey);
+                if (firstKey) {
+                  newCache.delete(firstKey);
+                }
               }
               
               return newCache;

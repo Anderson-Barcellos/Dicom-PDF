@@ -46,7 +46,7 @@ export function useOrthancSync(options: UseOrthancSyncOptions = {}) {
     isConnected,
   } = usePatientStore();
 
-  const pollingIntervalRef = useRef<NodeJS.Timeout>();
+  const pollingIntervalRef = useRef<number | undefined>(undefined);
   const isActiveRef = useRef(false);
   const lastPatientCountRef = useRef(0);
 

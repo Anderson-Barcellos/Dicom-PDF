@@ -3,8 +3,8 @@ import type { PatientStudy } from '../types/dicom.types';
 const WEBSOCKET_URL = import.meta.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
 export interface WebSocketMessage {
-  type: 'patient_added' | 'patient_updated' | 'patient_removed' | 'study_added' | 'study_updated' | 'connection_status' | 'error';
-  payload: any;
+  type: 'patient_added' | 'patient_updated' | 'patient_removed' | 'study_added' | 'study_updated' | 'connection_status' | 'error' | 'request_sync';
+  payload: unknown;
   timestamp: string;
 }
 
@@ -35,7 +35,7 @@ class WebSocketService {
         this.isConnecting = true;
         this.ws = new WebSocket(WEBSOCKET_URL);
 
-        this.ws.onopen = (event) => {
+        this.ws.onopen = () => {
           console.log('WebSocket connected successfully');
           this.isConnecting = false;
           this.reconnectAttempts = 0;
@@ -255,7 +255,8 @@ class WebSocketService {
     if (callbacks.onPatientRemoved) {
       unsubscribeFunctions.push(
         this.subscribe('patient_removed', (message) => {
-          callbacks.onPatientRemoved!(message.payload.patientId as string);
+          const payload = message.payload as { patientId: string };
+          callbacks.onPatientRemoved!(payload.patientId);
         })
       );
     }
