@@ -10,8 +10,14 @@ from PDFMAKER.pdfmaker import MkPDF
 from extract_ultrasound_text import extract_ultrasound_text
 
 
-import win32print
-import win32api
+# Windows-specific imports - only available on Windows
+try:
+    import win32print
+    import win32api
+    WINDOWS_PRINTING_AVAILABLE = True
+except ImportError:
+    # Not on Windows or pywin32 not installed
+    WINDOWS_PRINTING_AVAILABLE = False
 
 
 def sleep_with_while(seconds):
@@ -51,6 +57,12 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
     """
     if not os.path.exists(path_arquivo):
         print(f"Arquivo não encontrado: {path_arquivo}")
+        return
+
+    # Check if Windows printing is available
+    if not WINDOWS_PRINTING_AVAILABLE:
+        print(f"⚠️ Impressão não disponível nesta plataforma. Arquivo: {path_arquivo}")
+        print("💡 A funcionalidade de impressão está disponível apenas no Windows.")
         return
 
     # Obtém a impressora padrão se nenhuma impressora for especificada
