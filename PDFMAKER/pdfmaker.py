@@ -6,7 +6,7 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 
 
-def MkPDF(name: str):
+def MkPDF(name: str, folder: str = "Images", output_dir: str = "Pacientes"):
     """Create a PDF from images.
 
     The images are added without resizing but their display size is adjusted to
@@ -21,8 +21,9 @@ def MkPDF(name: str):
     doc_margin = 20
 
     # Inicializar o PDF
+    os.makedirs(output_dir, exist_ok=True)
     pdf = SimpleDocTemplate(
-        f"{name[15:]}.pdf",
+        os.path.join(output_dir, f"{name[15:]}.pdf"),
         pagesize=A4,
         rightMargin=doc_margin,
         leftMargin=doc_margin,
@@ -31,7 +32,7 @@ def MkPDF(name: str):
     )
 
     # Criar a pasta de imagens
-    folder = os.path.join(os.getcwd(), "Images")
+    folder = os.path.join(os.getcwd(), folder)
 
     # Table settings
     num_rows = 4
@@ -140,12 +141,5 @@ def MkPDF(name: str):
             )
             pdf.build([table, table2])
             print("PDF criado com sucesso")
-    import shutil
-    from pathlib import Path
-    # set for main.py directory relative path with .
-    os.chdir(".")
-    if Path(f"{name[15:]}.pdf").exists():
-        shutil.move(f"{name[15:]}.pdf", f"Pacientes/{name[15:]}.pdf")
-        print("PDF movido com sucesso!")
 
     T()
