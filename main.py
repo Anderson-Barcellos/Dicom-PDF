@@ -92,24 +92,32 @@ def Extract_Convert_Img(file: str):
     unzipper = Unzipper(f"{file}", "./Dicoms")
     unzipper.unzipper()
     name = unzipper.name
+    patient_name = name[15:]
     print(name)
-    dicom2jpeg = DICOM2JPEG("./Dicoms", "./Images")
+
+    # create patient folders
+    base_dir = os.path.join("Pacientes", patient_name)
+    images_dir = os.path.join(base_dir, "IMAGENS")
+    docs_dir = os.path.join(base_dir, "DOCUMENTOS")
+    os.makedirs(images_dir, exist_ok=True)
+    os.makedirs(docs_dir, exist_ok=True)
+
+    dicom2jpeg = DICOM2JPEG("./Dicoms", images_dir)
     dicom2jpeg.converter()
 
-    # Realiza OCR nas imagens convertidas antes de removê-las
-    os.makedirs("Pacientes", exist_ok=True)
-    txt_path = os.path.join("Pacientes", f"{name[15:]}.txt")
+    # OCR das imagens convertidas
+    txt_path = os.path.join(docs_dir, f"{patient_name}.txt")
     with open(txt_path, "w", encoding="utf-8") as txt_file:
-        for img in os.listdir("./Images"):
-            if img.lower().endswith(('.jpeg', '.jpg', '.png', '.bmp')):
-                img_path = os.path.join("./Images", img)
+        for img in os.listdir(images_dir):
+            if img.lower().endswith((".jpeg", ".jpg", ".png", ".bmp")):
+                img_path = os.path.join(images_dir, img)
                 text, _ = extract_ultrasound_text(img_path)
                 txt_file.write(f"# {img}\n{text}\n")
 
-    MkPDF(name)
-    dicom2jpeg.eliminate_all()
+    MkPDF(name, images_dir, docs_dir)
+    dicom2jpeg.eliminate_dcm()
 
-    return f"{name}.pdf"[15:]
+    return os.path.join(docs_dir, f"{patient_name}.pdf")
 
     # Test for a any other pdf file on the current folder
 
