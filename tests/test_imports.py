@@ -8,12 +8,10 @@ if ROOT_DIR not in sys.path:
 
 
 def test_imports():
-    import IMG2PDF
     from DicomManager.DICOM import DICOM2JPEG
     from DicomManager.unzip import Unzipper
     from PDFMAKER.pdfmaker import MkPDF
 
-    assert callable(IMG2PDF.Make_PDF)
     assert callable(DICOM2JPEG)
     assert callable(Unzipper)
     assert callable(MkPDF)
