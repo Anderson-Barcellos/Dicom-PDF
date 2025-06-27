@@ -6,6 +6,7 @@ dependencies:
   - python=3.10
   - pydicom
   - pillow
+  - numpy
   - reportlab
   - pip
   - pip:
