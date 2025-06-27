@@ -1,7 +1,7 @@
 import cv2
 import pytesseract
 import re
-from typing import Tuple, Dict
+from typing import Dict, List, Tuple
 
 
 def extract_ultrasound_text(
@@ -9,13 +9,13 @@ def extract_ultrasound_text(
     brightness_cut: int = 50,
     border_tol: float = 0.01,
     invert_thresh: int = 128,
-) -> Tuple[str, Dict[str, float]]:
+) -> Tuple[List[str], List[Dict[str, float]]]:
     """Realiza OCR em imagem de ultrassom.
 
     A função corta bordas escuras, inverte as cores caso o fundo seja preto e
     aplica o Tesseract para capturar o texto. Ao final, tenta identificar pares
-    ``rotulo: valor`` em cada linha e retorna o texto cru e um dicionário com
-    esses valores numéricos.
+    ``rotulo: valor`` em cada linha e retorna o texto em linhas e os dados
+    estruturados encontrados.
 
     Parameters
     ----------
@@ -32,9 +32,10 @@ def extract_ultrasound_text(
 
     Returns
     -------
-    Tuple[str, Dict[str, float]]
-        Texto retornado pelo Tesseract e qualquer par ``rotulo: valor``
-        encontrado.
+    Tuple[List[str], List[Dict[str, float]]]
+        Uma lista com cada linha do texto extraído e uma lista de dicionários
+        representando medidas encontradas. Cada dicionário possui as chaves
+        ``identifier``, ``value`` e ``unit``.
     """
     # 1. leitura e conversão para tons de cinza
     img_bgr = cv2.imread(image_path)
@@ -66,14 +67,27 @@ def extract_ultrasound_text(
     # 5. OCR
     raw_text = pytesseract.image_to_string(bw, lang="eng+por")
 
-    # 6. pares "rótulo-número"
-    findings: Dict[str, float] = {}
-    for line in raw_text.splitlines():
-        match = re.search(
-            r"([A-Za-z0-9]+)\s*[:=]?\s*([0-9]+[.,]?[0-9]*)", line)
-        if match:
-            key = match.group(1)
-            value = float(match.group(2).replace(',', '.'))
-            findings[key] = value
+    lines = [ln.strip() for ln in raw_text.splitlines() if ln.strip()]
 
-    return raw_text, findings
+    # 6. pares "rótulo-número"
+    measurements: List[Dict[str, float]] = []
+    pattern = re.compile(
+        r"(?P<identifier>[A-Za-z0-9_ ]+)\s*[:=]?\s*(?P<value>[0-9]+(?:[.,][0-9]+)?)\s*(?P<unit>[\u00b5A-Za-z%/]+)?"
+    )
+
+    for line in lines:
+        match = pattern.search(line)
+        if match:
+            identifier = match.group('identifier').strip()
+            value = float(match.group('value').replace(',', '.'))
+            unit = match.group('unit') or ''
+            measurements.append({
+                'identifier': identifier,
+                'value': value,
+                'unit': unit,
+            })
+
+    if not measurements:
+        raise ValueError('Nenhuma medida encontrada no texto extraído.')
+
+    return lines, measurements
