@@ -15,4 +15,3 @@ def test_imports():
     assert callable(DICOM2JPEG)
     assert callable(Unzipper)
     assert callable(MkPDF)
-
