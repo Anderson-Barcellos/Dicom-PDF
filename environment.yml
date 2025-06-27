@@ -9,3 +9,14 @@ dependencies:
       - -r requirements.txt
   - flake8
   - pytest
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pydicom
+  - pillow
+  - numpy
+  - reportlab
+  - pip
+  - pip:
+      - requests

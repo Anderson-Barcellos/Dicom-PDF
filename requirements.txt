@@ -1,5 +1,6 @@
 pydicom
 Pillow
+numpy
 matplotlib
 reportlab
 opencv-python
@@ -10,3 +11,4 @@ rich
 tabulate
 scipy
 pywin32; sys_platform == "win32"
+openai
