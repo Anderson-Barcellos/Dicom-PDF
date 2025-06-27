@@ -1,0 +1,12 @@
+name: dicom-pdf
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pydicom
+  - pillow
+  - reportlab
+  - pip
+  - pip:
+      - requests

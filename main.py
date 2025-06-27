@@ -8,7 +8,10 @@ from PDFMAKER.pdfmaker import MkPDF
 
 
 from utils.ocr import extract_ultrasound_text
+
 from utils.gpt_client import GPTClient
+
+
 
 
 # Windows-specific imports - only available on Windows
