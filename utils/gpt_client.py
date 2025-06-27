@@ -40,7 +40,7 @@ class GPTClient:
                 return response.choices[0].message["content"].strip()
             except Exception as exc:  # pragma: no cover - network failure
                 if attempt == self.max_retries - 1:
-                    print(f"OpenAI request failed: {exc}")
+                    logger.error(f"OpenAI request failed: {exc}")
                     return line
                 time.sleep(2 ** attempt)
         return line
