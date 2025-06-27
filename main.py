@@ -7,7 +7,8 @@ from DicomManager.DICOM import DICOM2JPEG
 from PDFMAKER.pdfmaker import MkPDF
 
 
-from extract_ultrasound_text import extract_ultrasound_text
+from utils.ocr import extract_ultrasound_text
+from utils.gpt_client import GPTClient
 
 
 # Windows-specific imports - only available on Windows
@@ -117,14 +118,22 @@ def Extract_Convert_Img(file: str):
     dicom2jpeg = DICOM2JPEG("./Dicoms", images_dir)
     dicom2jpeg.converter()
 
-    # OCR das imagens convertidas
+    gpt = GPTClient()
+
+    # OCR das imagens convertidas com melhoria via GPT
     txt_path = os.path.join(docs_dir, f"{patient_name}.txt")
     with open(txt_path, "w", encoding="utf-8") as txt_file:
         for img in os.listdir(images_dir):
             if img.lower().endswith((".jpeg", ".jpg", ".png", ".bmp")):
                 img_path = os.path.join(images_dir, img)
                 text, _ = extract_ultrasound_text(img_path)
-                txt_file.write(f"# {img}\n{text}\n")
+                enhanced_lines = []
+                for line in text.splitlines():
+                    if line.strip():
+                        enhanced_lines.append(gpt.enhance_text(line))
+                    else:
+                        enhanced_lines.append("")
+                txt_file.write(f"# {img}\n" + "\n".join(enhanced_lines) + "\n")
 
     MkPDF(name, images_dir, docs_dir)
     dicom2jpeg.eliminate_dcm()
