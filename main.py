@@ -7,7 +7,7 @@ from DicomManager.DICOM import DICOM2JPEG
 from PDFMAKER.pdfmaker import MkPDF
 
 
-from extract_ultrasound_text import extract_ultrasound_text
+from utils.ocr import extract_ultrasound_text
 
 
 # Windows-specific imports - only available on Windows
