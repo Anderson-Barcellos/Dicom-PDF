@@ -97,6 +97,21 @@ conda activate dicom-pdf
 
 You can then execute the main script or run your tests.
 
+### OCR Engine Setup
+
+This project relies on the `tesseract-ocr` engine for its OCR capabilities.
+Ensure the engine is available in your system so that the functions in
+`utils/ocr.py` work properly. On most Linux distributions you can install it
+using `apt`:
+
+```bash
+sudo apt-get update
+sudo apt-get install tesseract-ocr
+```
+
+If `tesseract` is not in your `PATH`, configure `pytesseract.pytesseract.tesseract_cmd`
+accordingly.
+
 ### Docker Setup
 
 To build a Docker image with all Python dependencies, run from the repository root:
