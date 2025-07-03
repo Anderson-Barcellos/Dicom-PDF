@@ -1,16 +1,21 @@
 name: dicom-pdf
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - python=3.10
   - pip
-  - flake8
-  - pytest
   - pydicom
   - pillow
   - numpy
+  - matplotlib
   - reportlab
+  - opencv
+  - pytesseract
+  - scipy
+  - rich
+  - tabulate
   - pip:
-      - requests
-      - -r requirements.txt
+      - pyorthanc
+      - fpdf
+      - openai
