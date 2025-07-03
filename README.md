@@ -37,11 +37,25 @@ It combines image processing with advanced biometrical analysis to provide a com
   - Creates a grid layout of ultrasound images
   - Incorporates biometrical data and growth charts into the report
 
-### 5. Main Execution (`main.py`)
+### 5. AI-Enhanced OCR and Reporting (`utils/gpt_client.py`, `utils/ocr.py`)
+
+- **Enhanced OCR Processing**: 
+  - Uses advanced image preprocessing and Tesseract OCR
+  - AI-powered text correction with GPT to fix OCR errors
+  - Improved accuracy for medical terminology and measurements
+
+- **Intelligent Medical Report Generation**:
+  - Automatically generates comprehensive medical reports using LLM
+  - Structured format with patient identification, findings, measurements, and recommendations
+  - Professional medical language and terminology
+
+### 6. Main Execution (`main.py`)
 
 - Orchestrates the entire process:
   - Unzips DICOM files
   - Converts DICOM to JPEG
+  - Performs enhanced OCR with AI correction
+  - Generates comprehensive medical reports
   - Extracts biometrical data
   - Generates growth charts
   - Creates the final PDF report
@@ -50,18 +64,20 @@ It combines image processing with advanced biometrical analysis to provide a com
 
 1. **DICOM Extraction**: Unzip and organize DICOM files
 2. **Image Conversion**: Convert DICOM images to JPEG format
-3. **Data Extraction**: Extract biometrical data from SR DICOM files
-4. **Chart Generation**: Create growth charts for each biometric measurement
-5. **Report Compilation**: Generate a PDF report with images, measurements, and charts
-6. **PDF Merging**: Combine multiple PDFs if necessary
+3. **Enhanced OCR Processing**: Extract text from ultrasound images with AI-enhanced accuracy
+4. **Data Extraction**: Extract biometrical data from SR DICOM files
+5. **Comprehensive Report Generation**: Use LLM to generate complete medical reports based on OCR findings
+6. **Chart Generation**: Create growth charts for each biometric measurement
+7. **Report Compilation**: Generate a PDF report with images, measurements, and charts
+8. **PDF Merging**: Combine multiple PDFs if necessary
 
 ### Patient Folder Organization
 
 All converted data resides under the `Pacientes` directory. For each new patient
 a folder named after the patient is created with the following structure:
 
-- `IMAGENS` – JPEG images converted from DICOM files
-- `DOCUMENTOS` – generated PDFs and OCR text files
+- `Images` – JPEG images converted from DICOM files arranged in PDF grid layout
+- `Report` – OCR extracted text files and AI-generated comprehensive medical reports
 
 The original DICOM files continue to be downloaded to the shared `Dicoms` folder.
 
@@ -69,9 +85,12 @@ The original DICOM files continue to be downloaded to the shared `Dicoms` folder
 
 1. **Comprehensive Data Processing**: Handles both image and structured report DICOM files
 2. **Enhanced Visualization**: Improves ultrasound image quality for better analysis
-3. **Biometrical Analysis**: Extracts and visualizes key fetal measurements
-4. **Growth Assessment**: Plots fetal measurements against standard growth curves
-5. **Customized Reporting**: Generates professional PDF reports with images and charts
+3. **AI-Enhanced OCR**: Uses GPT to improve OCR accuracy and correct extraction errors
+4. **Intelligent Medical Reporting**: Automatically generates comprehensive medical reports using LLM
+5. **Biometrical Analysis**: Extracts and visualizes key fetal measurements
+6. **Growth Assessment**: Plots fetal measurements against standard growth curves
+7. **Customized Reporting**: Generates professional PDF reports with images and charts
+8. **Structured File Organization**: Individual patient folders with organized Images and Report subfolders
 
 ## Technical Details
 
@@ -147,10 +166,31 @@ docker run --rm dicom-pdf
 - Presents growth charts for each measurement
 - Optimized for A4 paper size
 
-## Future Improvements
+## Recent Improvements
 
-1. Implement an individual patient folder inside the "main" Patients folder. Each will be named with the patients name and surname, and will store a folder with the PDF gridlayout images on "Images", and the extracted text from OCRing the US images in a .txt in "Report".
-2. Improve OCR results, and apply a LLM do generate a complete report based on findings.
+### ✅ Implemented Features (v2.0)
+
+1. **Individual Patient Folder Structure**: Each patient now has a dedicated folder named with their patient name and surname inside the "Pacientes" directory, with organized subfolders:
+   - `Images` – Contains PDF grid layout images converted from DICOM files
+   - `Report` – Contains extracted OCR text and AI-generated comprehensive medical reports
+
+2. **Enhanced OCR Processing**: Improved OCR accuracy using GPT-based text enhancement to correct extraction errors and improve readability.
+
+3. **AI-Powered Medical Report Generation**: Integrated LLM (GPT) to automatically generate comprehensive, structured medical reports based on OCR findings, including:
+   - Patient identification
+   - Exam data and technique
+   - Main findings and biometric measurements
+   - Diagnostic impressions
+   - Clinical recommendations
+
+### Future Enhancements
+
+1. Integration with PACS systems for direct DICOM retrieval
+2. Advanced image preprocessing for improved OCR accuracy
+3. Multi-language support for international use
+4. Web-based interface for easier access and management
+5. Real-time collaboration features for healthcare teams
+
 ## Conclusion
 
 This project provides a comprehensive solution for processing fetal ultrasound data, combining image analysis with advanced biometrical assessments. It offers healthcare professionals a powerful tool for monitoring fetal growth and development, enhancing the quality of prenatal care.
