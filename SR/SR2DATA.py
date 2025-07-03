@@ -4,7 +4,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, 
 from reportlab.lib.units import mm
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from typing import List, Dict, Tuple
-from SR2PLOT import create_other_plots
+from .SR2PLOT import create_other_plots
 import pydicom
 
 
