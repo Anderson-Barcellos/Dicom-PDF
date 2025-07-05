@@ -8,7 +8,15 @@ import json
 import logging
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
-from pyorthanc import Orthanc
+# pyorthanc is an optional dependency that may not be available in all test
+# environments (e.g. CI runners without system packages).  Import it lazily and
+# fall back to a sentinel so the rest of the code can still be imported and the
+# absence can be handled gracefully by runtime checks.
+
+try:
+    from pyorthanc import Orthanc  # type: ignore
+except ImportError:  # pragma: no cover – allows running tests without pyorthanc
+    Orthanc = None  # type: ignore[misc]
 from config import config
 
 
@@ -74,10 +82,16 @@ class OrthancValidator:
         """
         try:
             self.logger.step("Validating Orthanc connection")
-            self.orthanc = Orthanc(
+
+            # If pyorthanc was not imported successfully, abort validation with
+            # a clear error message instead of raising an AttributeError later.
+            if Orthanc is None:  # type: ignore[misc]
+                raise RuntimeError("pyorthanc package not available – cannot validate connection")
+
+            self.orthanc = Orthanc(  # type: ignore[call-arg]
                 config.orthanc_host,
                 config.orthanc_username,
-                config.orthanc_password
+                config.orthanc_password,
             )
             
             # Test connection by getting system info

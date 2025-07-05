@@ -9,7 +9,7 @@ def extract_ultrasound_text(
     brightness_cut: int = 50,
     border_tol: float = 0.01,
     invert_thresh: int = 128,
-) -> Tuple[List[str], List[Dict[str, float]]]:
+) -> Tuple[str, List[Dict[str, float]]]:
     """Realiza OCR em imagem de ultrassom.
 
     A função corta bordas escuras, inverte as cores caso o fundo seja preto e
@@ -32,8 +32,8 @@ def extract_ultrasound_text(
 
     Returns
     -------
-    Tuple[List[str], List[Dict[str, float]]]
-        Uma lista com cada linha do texto extraído e uma lista de dicionários
+    Tuple[str, List[Dict[str, float]]]
+        Uma string com o texto extraído e uma lista de dicionários
         representando medidas encontradas. Cada dicionário possui as chaves
         ``identifier``, ``value`` e ``unit``.
     """
@@ -87,7 +87,12 @@ def extract_ultrasound_text(
                 'unit': unit,
             })
 
-    if not measurements:
-        raise ValueError('Nenhuma medida encontrada no texto extraído.')
+    # Join extracted lines into a single text blob because downstream code
+    # expects a string and calls `.splitlines()` on it.
+    text_out = "\n".join(lines)
 
-    return lines, measurements
+    # Even if no measurements are detected we still return the raw OCR text so
+    # that downstream processing (e.g. PDF generation) can continue without
+    # raising an exception.  An empty measurements list signals that nothing
+    # was found instead of crashing the pipeline.
+    return text_out, measurements

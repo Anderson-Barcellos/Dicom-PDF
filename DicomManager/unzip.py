@@ -23,9 +23,18 @@ class Unzipper(object):
     internal_path = "/Unknown Study/US/"
 
     def __init__(self, path: str, folder: str) -> None:
-        self.path = zipfile.ZipFile(f"ZIPS/{path}")
+        # Allow absolute or relative paths. If the provided path is not
+        # absolute, use it as-is and let the caller decide the correct
+        # location.  This removes the previously hard-coded "ZIPS/" prefix
+        # that prevented the class from locating files saved in alternative
+        # directories (e.g. the configurable `config.zips_dir`).
+
+        self.file_path = os.fspath(path)
+        self.zip = zipfile.ZipFile(self.file_path)
+
         self.folder = folder
-        self.name = self.path.namelist()[0].split("/")[0]
+        # Keep original patient directory name (first element before first '/')
+        self.name = self.zip.namelist()[0].split("/")[0]
 
     def unzipper(self) -> None:
         """Extracts files from zip file.
@@ -38,8 +47,10 @@ class Unzipper(object):
         """
         import shutil
 
-        self.path.extractall()
-        members = self.path.namelist()
+        # Extract all contents to the current working directory so the
+        # subsequent relocation logic remains unchanged.
+        self.zip.extractall()
+        members = self.zip.namelist()
         name = self.name
 
         # Caminho do diretório atual
