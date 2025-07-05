@@ -158,4 +158,4 @@ class DICOM2JPEG:
         if arr.max() > 0:
             arr /= arr.max()
         arr = (arr * 255).astype(np.uint8)
-        return Image.fromarray(arr, mode='L').convert('RGB')
+        return Image.fromarray(arr, mode='RGB')
