@@ -1,7 +1,7 @@
-import cv2
-import pytesseract
+import cv2  # type: ignore
+import pytesseract  # type: ignore
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 
 def extract_ultrasound_text(
@@ -9,7 +9,7 @@ def extract_ultrasound_text(
     brightness_cut: int = 50,
     border_tol: float = 0.01,
     invert_thresh: int = 128,
-) -> Tuple[str, List[Dict[str, float]]]:
+) -> Tuple[str, List[Dict[str, Union[str, float]]]]:
     """Realiza OCR em imagem de ultrassom.
 
     A função corta bordas escuras, inverte as cores caso o fundo seja preto e
@@ -32,7 +32,7 @@ def extract_ultrasound_text(
 
     Returns
     -------
-    Tuple[str, List[Dict[str, float]]]
+    Tuple[str, List[Dict[str, Union[str, float]]]
         Uma string com o texto extraído e uma lista de dicionários
         representando medidas encontradas. Cada dicionário possui as chaves
         ``identifier``, ``value`` e ``unit``.
@@ -70,7 +70,7 @@ def extract_ultrasound_text(
     lines = [ln.strip() for ln in raw_text.splitlines() if ln.strip()]
 
     # 6. pares "rótulo-número"
-    measurements: List[Dict[str, float]] = []
+    measurements: List[Dict[str, Union[str, float]]] = []
     pattern = re.compile(
         r"(?P<identifier>[A-Za-z0-9_ ]+)\s*[:=]?\s*(?P<value>[0-9]+(?:[.,][0-9]+)?)\s*(?P<unit>[\u00b5A-Za-z%/]+)?"
     )
