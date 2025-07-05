@@ -1,3 +1,5 @@
 __pycache__/
 .ruff_cache/
 ZIPS/
+test_results/
+*.log
