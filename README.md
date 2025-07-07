@@ -1,8 +1,8 @@
 
 ## Project Overview
 
-This project processes ultrasound DICOM files, extracts and converts them  into images! 
-The process finishes with a 4x2 (8 images) grid layout pdf file page. ALso, in Obstetrical Exams you can create growth charts. 
+This project processes ultrasound DICOM files, extracts and converts them  into images!
+The process finishes with a 4x2 (8 images) grid layout pdf file page. ALso, in Obstetrical Exams you can create growth charts.
 It combines image processing with advanced biometrical analysis to provide a complete view of fetal development.
 
 ## Key Components
@@ -39,7 +39,7 @@ It combines image processing with advanced biometrical analysis to provide a com
 
 ### 5. AI-Enhanced OCR and Reporting (`utils/gpt_client.py`, `utils/ocr.py`)
 
-- **Enhanced OCR Processing**: 
+- **Enhanced OCR Processing**:
   - Uses advanced image preprocessing and Tesseract OCR
   - AI-powered text correction with GPT to fix OCR errors
   - Improved accuracy for medical terminology and measurements
@@ -91,6 +91,34 @@ The original DICOM files continue to be downloaded to the shared `Dicoms` folder
 6. **Growth Assessment**: Plots fetal measurements against standard growth curves
 7. **Customized Reporting**: Generates professional PDF reports with images and charts
 8. **Structured File Organization**: Individual patient folders with organized Images and Report subfolders
+9. **Robust Testing & Validation Framework**: Includes utilities for validating each processing step, logging, and automated test execution (see below)
+10. **Automated & Interactive Testing**: Test framework allows for both automated and interactive patient testing, including CI/CD integration
+
+## Testing & Validation Framework
+
+A comprehensive test framework is included to ensure the reliability and reproducibility of the DICOM PDF processing pipeline.
+
+### Main Components
+
+- **test_single_patient.py**: Run the full pipeline for a selected patient, interactively or by ID.
+- **test_utils.py**: Utility functions for validation, logging, and file integrity checks.
+- **run_automated_test.py**: Script for automated testing (CI/CD).
+- **validate_test_framework.py**: Validates the test framework and environment.
+- **TEST_README.md**: Full documentation for the test framework.
+
+### Features
+
+- **Interactive Patient Selection**: List and select patients from Orthanc for testing.
+- **Step-by-Step Validation**: Each processing step is validated with detailed logs.
+- **Automated Test Reports**: Generates JSON reports for each test run.
+- **File Structure Validation**: Ensures all expected files and folders are created.
+- **Quality Checks**: Validates image quality, OCR accuracy, and report structure.
+- **Comprehensive Logging**: Logs to both file and console for easy debugging.
+
+### Expected Folder Structure
+
+test_results/
+├── Pacientes
 
 ## Technical Details
 

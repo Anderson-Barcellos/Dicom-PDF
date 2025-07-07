@@ -2,9 +2,13 @@ __pycache__/
 .ruff_cache/
 !ZIPS/
 ZIPS/*
+!ZIPS/.gitkeep
+
 Dicoms/*
+!Dicoms/.gitkeep
 
 test_results/
 *.log
 *.jpeg
-*
+*.pdf
+.cursorignore
