@@ -62,8 +62,16 @@ def extract_convert_img(file: str) -> str:
 
     MkPDF(name)
     dicom2jpeg.eliminate_dcm()
+    
+    # Return the path to the generated PDF
+    return os.path.join(reports_dir, f"{patient_name}.pdf")
 
 def ocr_images(name: str) -> None:
+    """
+    Process OCR for images in a patient's folder.
+    This function is currently not implemented but preserved for future use.
+    """
+    pass
 
 
 def verify_process(pdf_path: str) -> None:
