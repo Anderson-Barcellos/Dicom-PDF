@@ -1,5 +1,10 @@
 __pycache__/
 .ruff_cache/
-ZIPS/
+!ZIPS/
+ZIPS/*
+Dicoms/*
+
 test_results/
 *.log
+*.jpeg
+*

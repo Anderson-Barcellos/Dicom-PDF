@@ -6,24 +6,33 @@ from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 
 
-def MkPDF(name: str, folder: str = "Images", output_dir: str = "Pacientes"):
-    """Create a PDF from images.
+def MkPDF(name: str):
+    """
+    📄 MkPDF
+    Generates a PDF document from a set of image files located in a specific patient directory. The images are arranged in a grid layout per page, with their display size automatically adjusted to fit the A4 page while maintaining aspect ratio. This function is typically used in a medical imaging workflow to compile patient images into a single PDF report.
 
-    The images are added without resizing but their display size is adjusted to
-    fit the page.
+    ### 🖥️ Parameters
+        - `name` (`str`): The base name of the patient folder and PDF file. This should correspond to the patient identifier or folder name containing the images and where the PDF will be saved.
 
-    #### Parametros:
-    - name: str
-        Nome do arquivo PDF que conterá as imagens.
+    ### 🔄 Returns
+        - `None`: The function creates and saves a PDF file to disk; it does not return any value.
+
+    ### ⚠️ Raises
+        - `FileNotFoundError`: If the expected image directory does not exist.
+        - `OSError`: If there is an error reading image files or writing the PDF.
+
+    ### 💡 Example
+
+    >>> MkPDF("20240601_Anders")
+    # Creates 'Patients/Anders/Report/Anders.pdf' with all images from 'Patients/Anders/Images'
     """
 
     # Margens do documento
     doc_margin = 20
 
     # Inicializar o PDF
-    os.makedirs(output_dir, exist_ok=True)
     pdf = SimpleDocTemplate(
-        os.path.join(output_dir, f"{name[15:]}.pdf"),
+        os.path.join("Patients", name, "Report", f"{name}.pdf"),
         pagesize=A4,
         rightMargin=doc_margin,
         leftMargin=doc_margin,
@@ -32,7 +41,7 @@ def MkPDF(name: str, folder: str = "Images", output_dir: str = "Pacientes"):
     )
 
     # Criar a pasta de imagens
-    folder = os.path.join(os.getcwd(), folder)
+    folder = os.path.join("Patients", name, "Images")
 
     # Table settings
     num_rows = 4
@@ -49,7 +58,7 @@ def MkPDF(name: str, folder: str = "Images", output_dir: str = "Pacientes"):
 
     # List all JPG images in the folder
 
-    def T():
+    def Wrap_PDF():
         """Wrapper para a função de criação do PDF"""
         images = [
             f
@@ -142,4 +151,4 @@ def MkPDF(name: str, folder: str = "Images", output_dir: str = "Pacientes"):
             pdf.build([table, table2])
             print("PDF criado com sucesso")
 
-    T()
+    Wrap_PDF()

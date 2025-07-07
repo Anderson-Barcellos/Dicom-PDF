@@ -12,24 +12,30 @@ from PIL import Image, ImageEnhance
 
 class DICOM2JPEG:
     """
-    Converte todos os arquivos DICOM (*.dcm) de uma pasta para JPEG,
-    mantendo resolução original e ajustando o nível de preto para não ficar muito intenso.
+    ### 🖼️ DICOM2JPEG
+    Converts all DICOM (*.dcm) files in a folder to JPEG format, preserving the original resolution and adjusting the black level to avoid overly intense dark areas.
 
-    Parâmetros
-    ----------
-    dcm_path     : str | Path
-        Pasta de entrada com os arquivos DICOM.
-    jpeg_path    : str | Path
-        Pasta de saída para os arquivos JPEG.
-    black_gamma  : float
-        Fator de correção de gamma (< 1 clareia tons escuros; > 1 escurece).
-        Ajusta o nível de preto para ficar menos intenso.
-    enhancements : dict
-        Fatores para realces opcionais: brilho, cor, contraste e nitidez.
-        Exemplo: {'brightness': 1.2, 'color': 1.0, 'contrast': 1.8, 'sharpness': 1.5}
-    jpeg_quality : int
-        Qualidade do JPEG (0-100).
+    ### 🖥️ Parameters
+        - `dcm_path` (`str` | `Path`): Input folder containing the DICOM files.
+        - `jpeg_path` (`str` | `Path`): Output folder for the generated JPEG files.
+        - `black_gamma` (`float`): Gamma correction factor (< 1 lightens dark tones; > 1 darkens). Adjusts the black level to be less intense.
+        - `enhancements` (`dict`): Optional enhancement factors for brightness, color, contrast, and sharpness.
+            Example: {'brightness': 1.2, 'color': 1.0, 'contrast': 1.8, 'sharpness': 1.5}
+        - `jpeg_quality` (`int`): JPEG quality (0-100).
+
+    ### 🔄 Returns
+        - `None`: This class is intended for file conversion and does not return a value.
+
+    ### ⚠️ Raises
+        - `FileNotFoundError`: If the input directory does not exist.
+        - `ValueError`: If any parameter is out of expected range or format.
+
+    ### 💡 Example
+
+    >>> DICOM2JPEG("input_folder", "output_folder", black_gamma=0.8, enhancements={'brightness': 1.2}, jpeg_quality=95)
+    # Converts all DICOM files in "input_folder" to JPEGs in "output_folder" with specified enhancements.
     """
+    
 
     def __init__(
         self,

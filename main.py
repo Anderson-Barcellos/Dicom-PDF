@@ -7,13 +7,6 @@ from DicomManager.DICOM import DICOM2JPEG
 from PDFMAKER.pdfmaker import MkPDF
 
 
-from utils.ocr import extract_ultrasound_text
-
-from utils.gpt_client import GPTClient
-
-
-
-
 # Windows-specific imports - only available on Windows
 try:
     import win32print
@@ -69,11 +62,11 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
         print("💡 A funcionalidade de impressão está disponível apenas no Windows.")
         return
 
-    # Obtém a impressora padrão se nenhuma impressora for especificada
+    # Get the default printer if no printer is specified
     if nome_impressora is None:
         nome_impressora = win32print.GetDefaultPrinter()
 
-    # Envia o arquivo para a impressora
+    # Send the file to the printer
     try:
         win32api.ShellExecute(
             0,
@@ -90,29 +83,35 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
 
 
 def Extract_Convert_Img(file: str):
-    """Extrai imagens DICOM, converte-as e gera relatórios.
+    """
+    🖼️ Extract_Convert_Img
+    Extracts DICOM images from a ZIP file, converts them to JPEG format, and generates a PDF report. This function is part of a medical imaging workflow, facilitating the conversion and compilation of DICOM images for further analysis and reporting.
 
-    Parameters
-    ----------
-    file : str
-        Nome do arquivo ZIP que contém as imagens DICOM.
+    ### 🖥️ Parameters
+    - `file` (`str`): The name of the ZIP file containing DICOM images. The file should be located in the current working directory.
 
-    Returns
-    -------
-    str
-        Caminho do PDF criado a partir das imagens. Após sua geração, um
-        processo de OCR pode ser executado para criar o arquivo de texto
-        correspondente.
+    ### 🔄 Returns
+    - `str`: The path to the created PDF file. After its generation, an OCR process can be executed to create the corresponding text file.
+
+    ### ⚠️ Raises
+    - `FileNotFoundError`: If the specified ZIP file does not exist.
+    - `OSError`: If there is an error during the extraction or conversion process.
+
+    ### 💡 Example
+
+    >>> Extract_Convert_Img("patient_data.zip")
+    'Pacientes/Anders/Report/Anders.pdf'
     """
     # Extract the file
-    unzipper = Unzipper(f"{file}", "./Dicoms")
+    unzipper = Unzipper(f"{file}", "Dicoms")
+    # Unzip the file
     unzipper.unzipper()
-    name = unzipper.name
-    patient_name = name[15:]
+    # Get the name of the patient
+    name = unzipper.name[15:]
     print(name)
 
-    # create patient folders
-    base_dir = os.path.join("Pacientes", patient_name)
+    # Create patient folders
+    base_dir = os.path.join("Patients", name)
     images_dir = os.path.join(base_dir, "Images")
     reports_dir = os.path.join(base_dir, "Report")
     os.makedirs(images_dir, exist_ok=True)
@@ -121,78 +120,44 @@ def Extract_Convert_Img(file: str):
     dicom2jpeg = DICOM2JPEG("./Dicoms", images_dir)
     dicom2jpeg.converter()
 
-    gpt = GPTClient()
-
-    # Extract and enhance OCR text from all images
-    all_ocr_findings = []
-    txt_path = os.path.join(reports_dir, f"{patient_name}_ocr.txt")
-    with open(txt_path, "w", encoding="utf-8") as txt_file:
-        for img in os.listdir(images_dir):
-            if img.lower().endswith((".jpeg", ".jpg", ".png", ".bmp")):
-                img_path = os.path.join(images_dir, img)
-                text, _ = extract_ultrasound_text(img_path)
-                enhanced_lines = []
-                for line in text.splitlines():
-                    if line.strip():
-                        enhanced_line = gpt.enhance_text(line)
-                        enhanced_lines.append(enhanced_line)
-                        all_ocr_findings.append(enhanced_line)
-                    else:
-                        enhanced_lines.append("")
-                txt_file.write(f"# {img}\n" + "\n".join(enhanced_lines) + "\n")
-
-    # Generate comprehensive medical report
-    if all_ocr_findings:
-        combined_findings = "\n".join(all_ocr_findings)
-        medical_report = gpt.generate_medical_report(combined_findings, patient_name)
-        
-        report_path = os.path.join(reports_dir, f"{patient_name}_report.txt")
-        with open(report_path, "w", encoding="utf-8") as report_file:
-            report_file.write(medical_report)
-
-    MkPDF(name, images_dir, reports_dir)
+    # Generate the PDF
+    MkPDF(name)
     dicom2jpeg.eliminate_dcm()
 
-    return os.path.join(reports_dir, f"{patient_name}.pdf")
+    return os.path.join(reports_dir, f"{name}.pdf")
 
-    # Test for a any other pdf file on the current folder
+    
 
-    print("Extração e conversão concluídas com sucesso, Anders!")
 
 
 # ORTHANC
 
+def orthanc():
+    orthanc = Orthanc("https://ultrassom.ai", "anders", "andi110386")
+    try:
+        while True:
+            # Load pacientes with ZIPS folder
+            oldest_patients = [patient[:-4] for patient in os.listdir("ZIPS")]
+            print(oldest_patients)
 
-orthanc = Orthanc("", "orthanc", "orthanc")
-try:
-    while True:
-        # Load pacientes atualizados
-        patients = None
-        with open('patients.json') as json_file:
-            patients = json.load(json_file)
 
-        # Atualização os pacientes
-        latest_patients = orthanc.get_patients()
-        if patients == latest_patients:
-            print("Nenhum novo paciente encontrado, Anders.... Procurando")
-            sleep_with_while(20)
-        else:
-            new_patients = [p for p in latest_patients if p not in patients]
+            # Update patients
+            latest_patients = orthanc.get_patients()
+            if oldest_patients == latest_patients:
+                print("Nenhum novo paciente encontrado, Anders.... Procurando")
+                sleep_with_while(20)
+            else:
+                new_patients = [p for p in latest_patients if p not in oldest_patients]
 
-            # Processo para cada novo paciente
-            for patient in new_patients:
-                response = orthanc.get_patients_id_archive(str(patient))
-                with open(f"ZIPS/{patient}.zip", "wb") as f:
-                    f.write(response)
-                imprimir_arquivo(Extract_Convert_Img(f"{patient}.zip"))
+                # Process for each new patient
+                for patient in new_patients:
+                    response = orthanc.get_patients_id_archive(str(patient))
+                    with open(f"ZIPS/{patient}.zip", "wb") as f:
+                        f.write(response)
+                    Extract_Convert_Img(f"{patient}.zip")
 
-            # Atualizar pacientes
-            patients = latest_patients
-
-            with open('patients.json', 'w') as json_file:
-                json.dump(patients, json_file)
-
-            # Esperar um momento (tempo em segundos) antes de verificar novamente
-            sleep_with_while(15)
-except Exception as e:
-    print(e)
+                # Update patients            # Wait a moment (seconds) before checking again
+                sleep_with_while(10)
+    except Exception as e:
+        print(e)
+orthanc()
