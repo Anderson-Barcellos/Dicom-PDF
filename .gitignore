@@ -1,14 +1,18 @@
 __pycache__/
 .ruff_cache/
+
+# Folders
 !ZIPS/
 ZIPS/*
 !ZIPS/.gitkeep
-
+Patients/*
+!Patients/g.gitkeep
 Dicoms/*
 !Dicoms/.gitkeep
 
 test_results/
 *.log
 *.jpeg
+*.dcm
 *.pdf
 .cursorignore
