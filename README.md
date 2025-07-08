@@ -1,6 +1,3 @@
-# DICOM to PDF Medical Imaging System
-
-![DICOM-PDF](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
 
 ## 🏥 Overview
 
@@ -155,5 +152,4 @@ This project is under active development. The core workflow is stable and produc
 
 ## 📝 Example
 
-
-![image](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
+![DICOM-PDF](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
