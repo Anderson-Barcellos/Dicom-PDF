@@ -1,226 +1,159 @@
+# DICOM to PDF Medical Imaging System
 
-## Project Overview
+![DICOM-PDF](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
 
-This project processes ultrasound DICOM files, extracts and converts them  into images!
-The process finishes with a 4x2 (8 images) grid layout pdf file page. ALso, in Obstetrical Exams you can create growth charts.
-It combines image processing with advanced biometrical analysis to provide a complete view of fetal development.
+## 🏥 Overview
 
-## Key Components
+An automated medical imaging processing system that connects to Orthanc PACS servers, processes DICOM files, and generates comprehensive PDF reports with automatic Windows printing capabilities.
 
-### 1. DICOM Processing (`DicomManager/DICOM.py`)
+## ✅ Implemented Features
 
-- **Class: DICOM2JPEG**
-  - Converts DICOM files to JPEG format
-  - Enhances image quality (contrast, brightness, sharpness)
-  - Identifies and separates Structured Report (SR) DICOM files
+### 🔄 Core Workflow (Fully Functional)
+- **Continuous Monitoring Loop**: Automatically monitors Orthanc PACS server for new patients
+- **Automated Download**: Downloads DICOM archives (.zip) from Orthanc server
+- **File Extraction**: Extracts DICOM files from compressed archives
+- **DICOM to JPEG Conversion**: Converts medical images to high-quality JPEG format
+- **PDF Generation**: Organizes images in A4-formatted tables and generates PDF reports
+- **Windows Auto-Printing**: Automatic printing on Windows systems (EPSON L3250 Series supported)
 
-### 2. Biometrical Data Extraction (`SR/SR2DATA.py`)
+### 🖼️ Image Processing
+- **High-Quality Conversion**: Maintains medical image fidelity during DICOM to JPEG conversion
+- **Gamma Correction**: Adjustable black level correction for optimal image visibility
+- **Enhancement Options**: Configurable brightness, contrast, color, and sharpness adjustments
+- **A4 Layout**: Smart image arrangement in 4x2 grid layout per PDF page
 
-- **Function: ExtractSR**
-  - Extracts biometrical measurements from DICOM SR files
-  - Processes key measurements: Head Circumference, Biparietal Diameter, Abdominal Circumference, Femur Length, Estimated Fetal Weight
+### 📁 File Organization
+- **Patient-Based Structure**: Automatic creation of organized patient directories
+- **Separate Folders**: Images and reports stored in dedicated subdirectories
+- **Clean Workspace**: Automatic cleanup of temporary DICOM files after processing
 
-- **Function: pdf_report**
-  - Generates a PDF report containing measurement data and growth charts
-  - Organizes plots in a two-per-page layout
+### 🖨️ Printing System
+- **Windows Integration**: Native Windows printing support using pywin32
+- **Printer Selection**: Configurable printer selection with fallback to default
+- **Error Handling**: Comprehensive error handling for printing operations
+- **Cross-Platform Awareness**: Graceful degradation on non-Windows platforms
 
-### 3. Growth Chart Generation (`SR/SR2PLOT.py`)
+## 🚧 Pending Features
 
-- **Function: create_other_plots**
-  - Creates individual growth charts for each biometric measurement
-  - Plots patient data against standard percentile curves (10th, 50th, 90th)
-  - Uses a dark theme for better visibility
+### 📊 DICOM Structured Report (SR) Processing
+- **SR Data Extraction**: Parse measurements and biometric data from DICOM SR files
+- **Measurement Visualization**: Generate plots and charts from extracted measurements
+- **Enhanced Reports**: Integrate SR data into PDF reports
 
-### 4. PDF Generation (`PDFMAKER/pdfmaker.py`)
+### 🔍 OCR & Text Processing
+- **OCR Integration**: Extract text from medical images using Tesseract
+- **Text Enhancement**: AI-powered text improvement using OpenAI GPT
+- **Medical Report Generation**: Automated medical report creation from OCR text
 
-- **Class: MkPDF**
-  - Creates a grid layout of ultrasound images
-  - Incorporates biometrical data and growth charts into the report
+### 🤖 AI Integration
+- **GPT Client**: OpenAI integration for medical text processing
+- **Intelligent Analysis**: AI-powered image and text analysis capabilities
+- **Report Enhancement**: Automated medical terminology and formatting improvements
 
-### 5. AI-Enhanced OCR and Reporting (`utils/gpt_client.py`, `utils/ocr.py`)
+## 🏗️ Project Structure
 
-- **Enhanced OCR Processing**:
-  - Uses advanced image preprocessing and Tesseract OCR
-  - AI-powered text correction with GPT to fix OCR errors
-  - Improved accuracy for medical terminology and measurements
+```
+Dicom-PDF/
+├── main.py                    # Main application loop
+├── config.py                  # Configuration management
+├── requirements.txt           # Python dependencies
+├── environment.yml           # Conda environment setup
+├── DicomManager/             # DICOM processing modules
+│   ├── DICOM.py             # DICOM to JPEG conversion
+│   └── unzip.py             # Archive extraction
+├── PDFMAKER/                # PDF generation
+│   └── pdfmaker.py          # A4 layout PDF creator
+├── SR/                      # Structured Report processing (pending)
+│   ├── SR2DATA.py           # SR data extraction
+│   └── SR2PLOT.py           # Measurement visualization
+├── utils/                   # Utility modules
+│   ├── gpt_client.py        # OpenAI integration (pending)
+│   └── ocr.py              # OCR processing (pending)
+├── ZIPS/                    # Downloaded archives storage
+├── Dicoms/                  # Temporary DICOM extraction
+└── Patients/               # Organized patient data
+    └── [PatientID]/
+        ├── Images/         # Converted JPEG images
+        └── Report/         # Generated PDF reports
+```
 
-- **Intelligent Medical Report Generation**:
-  - Automatically generates comprehensive medical reports using LLM
-  - Structured format with patient identification, findings, measurements, and recommendations
-  - Professional medical language and terminology
+## 🚀 Quick Start
 
-### 6. Main Execution (`main.py`)
+### Prerequisites
+- Python 3.8+
+- Windows OS (for printing functionality)
+- Access to Orthanc PACS server
 
-- Orchestrates the entire process:
-  - Unzips DICOM files
-  - Converts DICOM to JPEG
-  - Performs enhanced OCR with AI correction
-  - Generates comprehensive medical reports
-  - Extracts biometrical data
-  - Generates growth charts
-  - Creates the final PDF report
-
-## Workflow
-
-1. **DICOM Extraction**: Unzip and organize DICOM files
-2. **Image Conversion**: Convert DICOM images to JPEG format
-3. **Enhanced OCR Processing**: Extract text from ultrasound images with AI-enhanced accuracy
-4. **Data Extraction**: Extract biometrical data from SR DICOM files
-5. **Comprehensive Report Generation**: Use LLM to generate complete medical reports based on OCR findings
-6. **Chart Generation**: Create growth charts for each biometric measurement
-7. **Report Compilation**: Generate a PDF report with images, measurements, and charts
-8. **PDF Merging**: Combine multiple PDFs if necessary
-
-### Patient Folder Organization
-
-All converted data resides under the `Pacientes` directory. For each new patient
-a folder named after the patient is created with the following structure:
-
-- `Images` – JPEG images converted from DICOM files arranged in PDF grid layout
-- `Report` – OCR extracted text files and AI-generated comprehensive medical reports
-
-The original DICOM files continue to be downloaded to the shared `Dicoms` folder.
-
-## Key Features
-
-1. **Comprehensive Data Processing**: Handles both image and structured report DICOM files
-2. **Enhanced Visualization**: Improves ultrasound image quality for better analysis
-3. **AI-Enhanced OCR**: Uses GPT to improve OCR accuracy and correct extraction errors
-4. **Intelligent Medical Reporting**: Automatically generates comprehensive medical reports using LLM
-5. **Biometrical Analysis**: Extracts and visualizes key fetal measurements
-6. **Growth Assessment**: Plots fetal measurements against standard growth curves
-7. **Customized Reporting**: Generates professional PDF reports with images and charts
-8. **Structured File Organization**: Individual patient folders with organized Images and Report subfolders
-9. **Robust Testing & Validation Framework**: Includes utilities for validating each processing step, logging, and automated test execution (see below)
-10. **Automated & Interactive Testing**: Test framework allows for both automated and interactive patient testing, including CI/CD integration
-
-## Testing & Validation Framework
-
-A comprehensive test framework is included to ensure the reliability and reproducibility of the DICOM PDF processing pipeline.
-
-### Main Components
-
-- **test_single_patient.py**: Run the full pipeline for a selected patient, interactively or by ID.
-- **test_utils.py**: Utility functions for validation, logging, and file integrity checks.
-- **run_automated_test.py**: Script for automated testing (CI/CD).
-- **validate_test_framework.py**: Validates the test framework and environment.
-- **TEST_README.md**: Full documentation for the test framework.
-
-### Features
-
-- **Interactive Patient Selection**: List and select patients from Orthanc for testing.
-- **Step-by-Step Validation**: Each processing step is validated with detailed logs.
-- **Automated Test Reports**: Generates JSON reports for each test run.
-- **File Structure Validation**: Ensures all expected files and folders are created.
-- **Quality Checks**: Validates image quality, OCR accuracy, and report structure.
-- **Comprehensive Logging**: Logs to both file and console for easy debugging.
-
-### Expected Folder Structure
-
-test_results/
-├── Pacientes
-
-## Technical Details
-
-### Libraries Used
-
-- pydicom: For reading DICOM files
-- Pillow (PIL): For image processing
-- matplotlib: For creating growth charts
-- reportlab: For generating PDF reports
-- numpy: For numerical operations
-- scipy: For interpolation in growth charts
-
-### Development Environment
-
-This repository includes an optional Conda configuration. To create the
-environment, run:
-
+### Installation
 ```bash
+# Clone the repository
+git clone [repository-url]
+cd Dicom-PDF
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Or using conda
 conda env create -f environment.yml
 conda activate dicom-pdf
 ```
 
-You can then execute the main script or run your tests.
+### Configuration
+1. Update Orthanc server credentials in `main.py`
+2. Configure printer name in `imprimir_arquivo()` function
+3. Adjust image processing parameters in `DICOM2JPEG` class
 
-### OCR Engine Setup
-
-This project relies on the `tesseract-ocr` engine for its OCR capabilities.
-Ensure the engine is available in your system so that the functions in
-`utils/ocr.py` work properly. On most Linux distributions you can install it
-using `apt`:
-
+### Usage
 ```bash
-sudo apt-get update
-sudo apt-get install tesseract-ocr
+python main.py
 ```
 
-If `tesseract` is not in your `PATH`, configure `pytesseract.pytesseract.tesseract_cmd`
-accordingly.
+The system will:
+1. Connect to the Orthanc server
+2. Monitor for new patients every 20 seconds
+3. Process new DICOM archives automatically
+4. Generate PDFs and print them automatically
 
-### Docker Setup
+## 🔧 Configuration Options
 
-To build a Docker image with all Python dependencies, run from the repository root:
+### Image Processing
+- **Gamma Correction**: Adjust `black_gamma` parameter (default: 0.8)
+- **JPEG Quality**: Set compression quality (default: 99)
+- **Enhancements**: Configure brightness, contrast, color, sharpness
 
-```bash
-docker build -t dicom-pdf .
-```
+### PDF Layout
+- **Grid Size**: 4 rows × 2 columns per page
+- **Page Format**: A4 with optimized margins
+- **Image Sizing**: Automatic aspect ratio preservation
 
-Execute the container with:
+### Printing
+- **Default Printer**: EPSON L3250 Series
+- **Windows Only**: Automatic fallback on other platforms
+- **Error Handling**: Comprehensive logging and error recovery
 
-```bash
-docker run --rm dicom-pdf
-```
+## 📋 System Requirements
 
-### Data Processing
+### Required
+- Python 3.8+
+- PIL/Pillow for image processing
+- pydicom for DICOM handling
+- reportlab for PDF generation
+- pyorthanc for PACS integration
 
-- Extracts and processes various fetal measurements:
-  - Head Circumference (HC)
-  - Biparietal Diameter (BPD)
-  - Abdominal Circumference (AC)
-  - Femur Length (FL)
-  - Estimated Fetal Weight (EFW)
+### Windows Printing
+- pywin32 (Windows only)
+- Compatible printer drivers
 
-### Visualization
+### Pending Features Dependencies
+- tesseract-ocr (for OCR functionality)
+- openai (for AI text processing)
+- matplotlib/plotly (for SR visualization)
 
-- Growth charts use a dark theme for better contrast
-- Each chart includes 10th, 50th, and 90th percentile lines
-- Patient's specific measurement is highlighted on each chart
+## 🤝 Contributing
 
-### PDF Generation
+This project is under active development. The core workflow is stable and production-ready, while advanced features (OCR, AI integration, SR processing) are being implemented.
 
-- Combines ultrasound images in a grid layout
-- Includes a summary of all biometrical measurements
-- Presents growth charts for each measurement
-- Optimized for A4 paper size
+## 📝 Example
 
-## Recent Improvements
-
-### ✅ Implemented Features (v2.0)
-
-1. **Individual Patient Folder Structure**: Each patient now has a dedicated folder named with their patient name and surname inside the "Pacientes" directory, with organized subfolders:
-   - `Images` – Contains PDF grid layout images converted from DICOM files
-   - `Report` – Contains extracted OCR text and AI-generated comprehensive medical reports
-
-2. **Enhanced OCR Processing**: Improved OCR accuracy using GPT-based text enhancement to correct extraction errors and improve readability.
-
-3. **AI-Powered Medical Report Generation**: Integrated LLM (GPT) to automatically generate comprehensive, structured medical reports based on OCR findings, including:
-   - Patient identification
-   - Exam data and technique
-   - Main findings and biometric measurements
-   - Diagnostic impressions
-   - Clinical recommendations
-
-### Future Enhancements
-
-1. Integration with PACS systems for direct DICOM retrieval
-2. Advanced image preprocessing for improved OCR accuracy
-3. Multi-language support for international use
-4. Web-based interface for easier access and management
-5. Real-time collaboration features for healthcare teams
-
-## Conclusion
-
-This project provides a comprehensive solution for processing fetal ultrasound data, combining image analysis with advanced biometrical assessments. It offers healthcare professionals a powerful tool for monitoring fetal growth and development, enhancing the quality of prenatal care.
 
 ![image](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)

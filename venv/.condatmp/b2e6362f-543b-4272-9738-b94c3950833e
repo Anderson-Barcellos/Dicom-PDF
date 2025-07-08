@@ -1,7 +1,0 @@
-prefix=/workspaces/Dicom-PDF/venv
-datarootdir=${prefix}/share
-pkgdatadir=${pc_sysrootdir}${datarootdir}/wayland-protocols
-
-Name: Wayland Protocols
-Description: Wayland protocol files
-Version: 1.45
