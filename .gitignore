@@ -11,16 +11,14 @@ env.bak/
 venv.bak/
 
 # Folders
-!ZIPS/
-ZIPS/*
+ZIPS/**
 !ZIPS/.gitkeep
 # Patient data files (but keep folder structure)
-Patients/**/*.jpeg
-Patients/**/*.jpg
-Patients/**/*.pdf
-Patients/**/*.dcm
+
+Patients/**
 !Patients/.gitkeep
 !Patients/**/.gitkeep
+
 Dicoms/*
 !Dicoms/.gitkeep
 

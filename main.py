@@ -1,4 +1,21 @@
-import json
+
+"""
+📄 Dicom-PDF Main Module
+Este módulo automatiza o processo de extração, conversão e geração de relatórios de imagens DICOM a partir de arquivos ZIP. Ele integra-se ao PACS Orthanc para gerenciamento de pacientes, converte imagens DICOM para o formato JPEG e gera relatórios em PDF. Além disso, inclui funcionalidade específica para impressão no Windows.
+📥 Funções Principais:
+- `sleep_with_while(seconds)`: Exibe uma contagem regressiva enquanto aguarda o tempo especificado.
+- `imprimir_arquivo(path_arquivo, nome_impressora)`: Envia um arquivo para impressão em uma impressora específica no Windows.
+- `Extract_Convert_Img(file)`: Extrai imagens DICOM de um arquivo ZIP, converte-as para JPEG e gera um relatório em PDF.
+- `orthanc()`: Integra-se ao Orthanc PACS para monitorar e processar novos pacientes.
+- Este módulo utiliza parâmetros internos e funções auxiliares para realizar suas operações. Consulte as docstrings individuais para detalhes.
+📤 Retornos:
+- O módulo retorna caminhos de arquivos gerados, como PDFs, e mensagens de status para o usuário.
+⚠️ Exceções:
+- `FileNotFoundError`: Se arquivos especificados não forem encontrados.
+- `OSError`: Se ocorrerem erros durante a extração ou conversão.
+- `Exception`: Para erros gerais, como falhas na integração com Orthanc ou na impressão.
+"""
+
 import os
 import time
 from pyorthanc import Orthanc
@@ -7,17 +24,48 @@ from DicomManager.DICOM import DICOM2JPEG
 from PDFMAKER.pdfmaker import MkPDF
 
 
-# Windows-specific imports - only available on Windows
-try:
-    import win32print
-    import win32api
-    WINDOWS_PRINTING_AVAILABLE = True
-except ImportError:
-    # Not on Windows or pywin32 not installed
-    WINDOWS_PRINTING_AVAILABLE = False
+###############################################################################
+#                         WINDOWS-SPECIFIC IMPORTS                            #
+#                     (Only available on Windows OS)                          #
+###############################################################################
 
+#try:
+#    import win32print
+#    import win32api
+#    WINDOWS_PRINTING_AVAILABLE = True
+#except ImportError:
+#    # Not on Windows or pywin32 not installed
+#    WINDOWS_PRINTING_AVAILABLE = False
+
+###############################################################################
+#                                                                             #
+#   Dicom-PDF Main Script                                                     #
+#                                                                             #
+#   This script automates the extraction, conversion, and reporting of DICOM   #
+#   images from ZIP archives. It integrates with Orthanc PACS for patient      #
+#   management, converts DICOM images to JPEG, and generates PDF reports.      #
+#   Windows-specific printing functionality is included for report output.     #
+#                                                                             #
+#   Author: Anders                                                            #
+#   Repository: https://github.com/AndersDeveloper/Dicom-PDF                  #
+#                                                                             #
+###############################################################################
 
 def sleep_with_while(seconds):
+    """
+    ### ⏳ Timer Function with While Loop
+    Function to create a timer that displays the remaining time every second using a `while` loop.
+    #### 📥 Parameters:
+        seconds: int
+    ### 🕒 Returns:    
+        None
+    
+    #### Example:
+    
+    ```python
+sleep_with_while(10)
+    ```
+    """ 
     start_time = time.time()  # Tempo inicial
     while time.time() - start_time < seconds:
         elapsed_time = time.time() - start_time
@@ -38,6 +86,7 @@ def imprimir_arquivo(path_arquivo, nome_impressora="EPSON L3250 Series"):
     :type path_arquivo: str
     :param nome_impressora: 🖨️ Nome da impressora a ser utilizada. Se None, utiliza a impressora padrão.
     :type nome_impressora: str, optional
+#   License: MIT                                                              #
 
     :return: None
 
