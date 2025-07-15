@@ -1,8 +1,23 @@
 __pycache__/
 .ruff_cache/
-!ZIPS/
-ZIPS/*
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# Folders
+ZIPS/**
 !ZIPS/.gitkeep
+# Patient data files (but keep folder structure)
+
+Patients/**
+!Patients/.gitkeep
+!Patients/**/.gitkeep
 
 Dicoms/*
 !Dicoms/.gitkeep
@@ -10,5 +25,6 @@ Dicoms/*
 test_results/
 *.log
 *.jpeg
+*.dcm
 *.pdf
 .cursorignore
