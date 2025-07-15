@@ -35,7 +35,7 @@ class DICOM2JPEG:
     >>> DICOM2JPEG("input_folder", "output_folder", black_gamma=0.8, enhancements={'brightness': 1.2}, jpeg_quality=95)
     # Converts all DICOM files in "input_folder" to JPEGs in "output_folder" with specified enhancements.
     """
-    
+
 
     def __init__(
         self,
@@ -152,16 +152,17 @@ class DICOM2JPEG:
         if photo in ('RGB',):
             return Image.fromarray(ds.pixel_array, mode='RGB')
         if photo in ('YBR_FULL_422', 'YBR_FULL'):
-            return Image.fromarray(ds.pixel_array, mode='YCbCr').convert('RGB')
+            return Image.fromarray(ds.pixel_array)
 
         # Monocromáticas
-        arr = apply_modality_lut(ds.pixel_array, ds)
-        arr = apply_voi_lut(arr, ds)
-        if photo == 'MONOCHROME1':
-            arr = np.max(arr) - arr
-        arr = arr.astype(np.float32)
-        arr -= arr.min()
-        if arr.max() > 0:
-            arr /= arr.max()
-        arr = (arr * 255).astype(np.uint8)
-        return Image.fromarray(arr, mode='RGB')
+        if photo in ('MONOCHROME1', 'MONOCHROME2'):
+            arr = apply_modality_lut(ds.pixel_array, ds)
+            arr = apply_voi_lut(arr, ds)
+            if photo == 'MONOCHROME1':
+                arr = np.max(arr) - arr
+            arr = arr.astype(np.float32)
+            arr -= arr.min()
+            if arr.max() > 0:
+                arr /= arr.max()
+            arr = (arr * 255).astype(np.uint8)
+            return Image.fromarray(arr, mode='RGB')
