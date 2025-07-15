@@ -4,46 +4,32 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
-
-
-def MkPDF(name: str):
-    """
-    📄 MkPDF
-    Generates a PDF document from a set of image files located in a specific patient directory. The images are arranged in a grid layout per page, with their display size automatically adjusted to fit the A4 page while maintaining aspect ratio. This function is typically used in a medical imaging workflow to compile patient images into a single PDF report.
-
-    ### 🖥️ Parameters
-        - `name` (`str`): The base name of the patient folder and PDF file. This should correspond to the patient identifier or folder name containing the images and where the PDF will be saved.
-
-    ### 🔄 Returns
-        - `None`: The function creates and saves a PDF file to disk; it does not return any value.
-
-    ### ⚠️ Raises
-        - `FileNotFoundError`: If the expected image directory does not exist.
-        - `OSError`: If there is an error reading image files or writing the PDF.
-
-    ### 💡 Example
-
-    >>> MkPDF("20240601_Anders")
-    # Creates 'Patients/Anders/Report/Anders.pdf' with all images from 'Patients/Anders/Images'
+#
+def MkPDF(name: str) -> None:
+    """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page.
+    #### Parametros:
+    - name: str
+        Nome do arquivo PDF que conterá as imagens.
     """
 
     # Margens do documento
     doc_margin = 20
 
     # Inicializar o PDF
+    # Usar caminho absoluto baseado no diretório atual
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    pdf_path = os.path.join(project_root, "Users", "Anders", "Patients", name, "Report", f"{name}.pdf")
+
     pdf = SimpleDocTemplate(
-        os.path.join("Patients", name, "Report", f"{name}.pdf"),
+        pdf_path,
         pagesize=A4,
         rightMargin=doc_margin,
         leftMargin=doc_margin,
         topMargin=20,
         bottomMargin=doc_margin,
     )
-
-    # Criar a pasta de imagens
-    folder = os.path.join("Patients", name, "Images")
-
-    # Table settings
+    folder = os.path.join(project_root, "Users", "Anders", "Patients", name, "Images")
+     # Table settings
     num_rows = 4
     num_cols = 2
     cell_padding = 5
@@ -58,7 +44,7 @@ def MkPDF(name: str):
 
     # List all JPG images in the folder
 
-    def Wrap_PDF():
+    def T():
         """Wrapper para a função de criação do PDF"""
         images = [
             f
@@ -121,7 +107,7 @@ def MkPDF(name: str):
                 )
             )
             pdf.build([table])
-            print("PDF criado com sucesso")
+            print(f"PDF criado com sucesso")
 
         else:
             half = images[:8]
@@ -149,6 +135,6 @@ def MkPDF(name: str):
                 )
             )
             pdf.build([table, table2])
-            print("PDF criado com sucesso")
+            print(f"PDF criado com sucesso")
 
-    Wrap_PDF()
+    T()
