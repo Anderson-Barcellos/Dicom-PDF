@@ -1,237 +1,253 @@
-# DICOM to PDF and AI-Powered Reporting System
+# DICOM to PDF and AI-Powered Medical Reporting System
 
-<<<<<<< HEAD
-This project is an automated pipeline designed to process medical DICOM files from an Orthanc server. It converts DICOM images into JPEG format, compiles them into a structured PDF report, extracts data from DICOM Structured Reports (SR), and leverages AI to generate insightful medical reports from image data.
-
-## 🌟 Key Features
-
-- **Automated Orthanc Integration**: Continuously monitors an Orthanc server for new patient studies, automatically downloading and processing the data.
-- **DICOM to JPEG Conversion**: Converts DICOM files to high-quality JPEGs, with options for image enhancement to improve visual clarity.
-- **Structured PDF Generation**: Arranges the generated JPEG images into a clean, grid-based (4x2) PDF document suitable for clinical review.
-- **DICOM SR Analysis**: Extracts biometrical data from DICOM Structured Report (SR) files, generates growth charts, and compiles them into a separate, detailed PDF report.
-- **AI-Enhanced Reporting**:
-    - **OCR**: Uses Tesseract to extract textual information from ultrasound images.
-    - **Pathology & Doppler Analysis**: Intelligently parses OCR text to identify potential pathologies and extract quantitative Doppler ultrasound parameters.
-    - **GPT-Powered Summaries**: Utilizes a GPT model to generate professional, formatted medical reports based on the extracted findings.
-- **Configuration Management**: A centralized configuration system (`config.py`) allows for easy setup of Orthanc credentials, OpenAI API keys, and directory paths using environment variables.
-- **Modular Architecture**: The codebase is organized into distinct modules for DICOM handling (`DicomManager`), PDF creation (`PDFMAKER`), Structured Reporting (`SR`), and utilities (`utils`), promoting maintainability and scalability.
-
-##  workflow
-
-1.  **Monitor & Download**: The system connects to a configured Orthanc server and polls for new patient studies.
-2.  **Unzip & Organize**: When a new study is found, its corresponding ZIP archive is downloaded and extracted into a structured directory.
-3.  **Image Conversion**: All DICOM (`.dcm`) images within the study are converted into high-quality JPEG images.
-4.  **PDF Compilation**: The JPEG images are compiled into a primary PDF report with a 4x2 grid layout.
-5.  **SR Data Processing**: If DICOM SR files are present, biometrical data is extracted, plotted onto growth charts, and a secondary PDF report is generated.
-6.  **AI Analysis (Optional)**:
-    - Text is extracted from images via OCR.
-    - The extracted text is analyzed to identify medical terms, measurements, and pathologies.
-    - The findings are sent to an AI model to generate a structured, human-readable medical report.
-
-## 🛠️ Setup and Installation
-
-### Prerequisites
-
-- Python 3.10+
-- Conda package manager
-- Tesseract OCR engine installed on your system.
-
-### Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/Dicom-PDF.git
-    cd Dicom-PDF
-    ```
-
-2.  **Create and activate the Conda environment:**
-    The `environment.yml` file contains all the necessary dependencies.
-    ```bash
-    conda env create -f environment.yml
-    conda activate dicom-pdf
-    ```
-    Alternatively, for a pip-based setup, you can use `requirements.txt` (though Conda is recommended for managing complex dependencies like `opencv`):
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Configure Environment Variables:**
-    The system uses environment variables for sensitive data. You can set them in your shell or use a `.env` file.
-    ```bash
-    export ORTHANC_HOST="https://your-orthanc-server.com"
-    export ORTHANC_USERNAME="your-username"
-    export ORTHANC_PASSWORD="your-password"
-    export OPENAI_API_KEY="your-openai-api-key"
-    ```
-
-## 🚀 Usage
-
-To start the main monitoring service, run the `main.py` script. The application will connect to Orthanc and begin watching for new patients.
-=======
 ## 🏥 Overview
 
-An automated medical imaging processing system that connects to Orthanc PACS servers, processes DICOM files, and generates comprehensive PDF reports with automatic Windows printing capabilities.
+An advanced automated medical imaging processing system that seamlessly integrates with Orthanc PACS servers to process DICOM files and generate comprehensive PDF reports with AI-powered medical analysis capabilities. The system is designed for clinical environments requiring automated processing of medical imaging data with intelligent reporting features.
 
-## ✅ Implemented Features
+## ✨ Key Features
 
-### 🔄 Core Workflow (Fully Functional)
-- **Continuous Monitoring Loop**: Automatically monitors Orthanc PACS server for new patients
-- **Automated Download**: Downloads DICOM archives (.zip) from Orthanc server
-- **File Extraction**: Extracts DICOM files from compressed archives
-- **DICOM to JPEG Conversion**: Converts medical images to high-quality JPEG format
-- **PDF Generation**: Organizes images in A4-formatted tables and generates PDF reports
-- **Windows Auto-Printing**: Automatic printing on Windows systems (EPSON L3250 Series supported)
+### 🔄 Core Workflow (Production Ready)
+- **Continuous PACS Monitoring**: Real-time monitoring of Orthanc PACS server for new patient studies
+- **Multi-User Support**: User-specific patient management and organization system
+- **Automated Download & Processing**: Seamless download and processing of DICOM archives (.zip)
+- **Intelligent File Extraction**: Advanced ZIP extraction with proper patient naming and organization
+- **High-Quality DICOM Conversion**: Converts medical images to optimized JPEG format with medical-grade quality
+- **Professional PDF Generation**: Creates A4-formatted reports with 4x2 grid layout per page
+- **Automated Cleanup**: Intelligent cleanup of temporary files after processing
 
-### 🖼️ Image Processing
-- **High-Quality Conversion**: Maintains medical image fidelity during DICOM to JPEG conversion
-- **Gamma Correction**: Adjustable black level correction for optimal image visibility
-- **Enhancement Options**: Configurable brightness, contrast, color, and sharpness adjustments
-- **A4 Layout**: Smart image arrangement in 4x2 grid layout per PDF page
+### 🖼️ Advanced Image Processing
+- **Medical Image Optimization**: Specialized processing for medical imaging requirements
+- **Gamma Correction**: Adjustable black level correction for optimal medical image visibility
+- **Enhancement Pipeline**: Configurable brightness, contrast, color, and sharpness adjustments
+- **Video Detection**: Automatic detection and skipping of video/multiframe DICOM files
+- **Modality Support**: Support for various DICOM modalities with appropriate processing
+- **Quality Preservation**: Maintains medical image fidelity during conversion process
 
-### 📁 File Organization
-- **Patient-Based Structure**: Automatic creation of organized patient directories
-- **Separate Folders**: Images and reports stored in dedicated subdirectories
-- **Clean Workspace**: Automatic cleanup of temporary DICOM files after processing
+### 🤖 AI-Powered Medical Reporting
+- **GPT-4o Vision OCR**: Advanced OCR using OpenAI's GPT-4o Vision model for medical text extraction
+- **Intelligent Medical Analysis**: AI-powered analysis of ultrasound images and findings
+- **Professional Report Generation**: Automated generation of structured medical reports using OpenAI's O3 model
+- **Medical Terminology Processing**: Specialized handling of medical terminology and measurements
+- **Multi-Modal Processing**: Batch processing of multiple images for comprehensive analysis
+- **Markdown to PDF Conversion**: Professional formatting of AI-generated reports
 
-### 🖨️ Printing System
+### � Robust File Organization
+- **Patient-Centric Structure**: Organized patient directories with dedicated subdirectories
+- **Separate Asset Management**: Images and reports stored in dedicated folders
+- **User-Based Organization**: Multi-user support with user-specific patient management
+- **Automatic Directory Creation**: Dynamic creation of required directory structures
+- **Clean Workspace Management**: Automated cleanup of temporary processing files
+
+### 🖨️ Printing System (Windows)
 - **Windows Integration**: Native Windows printing support using pywin32
-- **Printer Selection**: Configurable printer selection with fallback to default
+- **Printer Management**: Configurable printer selection with fallback options
 - **Error Handling**: Comprehensive error handling for printing operations
 - **Cross-Platform Awareness**: Graceful degradation on non-Windows platforms
 
-## 🚧 Pending Features
-
-### 📊 DICOM Structured Report (SR) Processing
-- **SR Data Extraction**: Parse measurements and biometric data from DICOM SR files
-- **Measurement Visualization**: Generate plots and charts from extracted measurements
-- **Enhanced Reports**: Integrate SR data into PDF reports
-
-### 🔍 OCR & Text Processing
-- **OCR Integration**: Extract text from medical images using Tesseract
-- **Text Enhancement**: AI-powered text improvement using OpenAI GPT
-- **Medical Report Generation**: Automated medical report creation from OCR text
-
-### 🤖 AI Integration
-- **GPT Client**: OpenAI integration for medical text processing
-- **Intelligent Analysis**: AI-powered image and text analysis capabilities
-- **Report Enhancement**: Automated medical terminology and formatting improvements
-
-## 🏗️ Project Structure
+## 🏗️ Project Architecture
 
 ```
 Dicom-PDF/
-├── main.py                    # Main application loop
-├── config.py                  # Configuration management
-├── requirements.txt           # Python dependencies
-├── environment.yml           # Conda environment setup
+├── main.py                    # Main application loop with Orthanc integration
+├── environment.yml           # Conda environment configuration
+├── .github/workflows/        # CI/CD pipelines
+│   ├── python-package-conda.yml
+│   └── docker-image.yml
 ├── DicomManager/             # DICOM processing modules
-│   ├── DICOM.py             # DICOM to JPEG conversion
-│   └── unzip.py             # Archive extraction
-├── PDFMAKER/                # PDF generation
-│   └── pdfmaker.py          # A4 layout PDF creator
-├── SR/                      # Structured Report processing (pending)
-│   ├── SR2DATA.py           # SR data extraction
-│   └── SR2PLOT.py           # Measurement visualization
-├── utils/                   # Utility modules
-│   ├── gpt_client.py        # OpenAI integration (pending)
-│   └── ocr.py              # OCR processing (pending)
-├── ZIPS/                    # Downloaded archives storage
+│   ├── __init__.py
+│   ├── DICOM.py             # Advanced DICOM to JPEG conversion
+│   └── unzip.py             # ZIP extraction and patient organization
+├── PDFMAKER/                # PDF generation system
+│   ├── __init__.py
+│   └── pdfmaker.py          # A4 layout PDF creator with table formatting
+├── OCR/                     # AI-powered OCR and reporting
+│   ├── __init__.py
+│   ├── gpt_ocr.py           # GPT-4o Vision OCR and O3 report generation
+│   └── markdown_to_pdf.py   # Markdown to PDF conversion
+├── Users/                   # User management system
+│   └── Anders/
+│       └── Patients/        # Patient data organization
+├── ZIPS/                    # Downloaded DICOM archives
 ├── Dicoms/                  # Temporary DICOM extraction
-└── Patients/               # Organized patient data
+└── [Patient Processing Output]
     └── [PatientID]/
-        ├── Images/         # Converted JPEG images
-        └── Report/         # Generated PDF reports
+        ├── Images/          # Converted JPEG images
+        └── Report/          # Generated PDF reports
 ```
 
-## 🚀 Quick Start
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Python 3.8+
-- Windows OS (for printing functionality)
-- Access to Orthanc PACS server
->>>>>>> 59bf4b9598f75f3a68716b82e23e3f129578c713
+- **Python 3.10+** (Required for modern AI features)
+- **Conda package manager** (Recommended for dependency management)
+- **Orthanc PACS server access** (Required for DICOM retrieval)
+- **OpenAI API key** (Required for AI-powered features)
+- **Windows OS** (Optional, for printing functionality)
 
-### Installation
-```bash
-<<<<<<< HEAD
-python main.py
-```
+### Environment Setup
 
-The project also includes a comprehensive testing framework for processing individual patients without running the full monitoring loop. See the `IMPLEMENTATION_SUMMARY.md` document for more details on this functionality.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Anderson-Barcellos/Dicom-PDF.git
+   cd Dicom-PDF
+   ```
 
----
-### Image Reporte Example:
+2. **Create and activate the Conda environment:**
+   ```bash
+   conda env create -f environment.yml
+   conda activate dicom-pdf
+   ```
 
-![image](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
-=======
-# Clone the repository
-git clone [repository-url]
-cd Dicom-PDF
+3. **Configure environment variables:**
+   ```bash
+   # Set OpenAI API key for AI features
+   export OPENAI_API_KEY="your-openai-api-key"
+   
+   # Optional: Configure other environment variables
+   export ORTHANC_HOST="http://your-orthanc-server:8042"
+   export ORTHANC_USERNAME="your-username"
+   export ORTHANC_PASSWORD="your-password"
+   ```
 
-# Install dependencies
-pip install -r requirements.txt
+4. **Set up user configuration:**
+   Create a `Users/users.json` file with your user configuration:
+   ```json
+   {
+     "Anders": {
+       "AET": "YOUR_AET",
+       "patients": [],
+       "patients_names": []
+     }
+   }
+   ```
 
-# Or using conda
-conda env create -f environment.yml
-conda activate dicom-pdf
-```
+## 🎯 Usage
 
-### Configuration
-1. Update Orthanc server credentials in `main.py`
-2. Configure printer name in `imprimir_arquivo()` function
-3. Adjust image processing parameters in `DICOM2JPEG` class
-
-### Usage
+### Basic Operation
 ```bash
 python main.py
 ```
 
 The system will:
-1. Connect to the Orthanc server
-2. Monitor for new patients every 20 seconds
-3. Process new DICOM archives automatically
-4. Generate PDFs and print them automatically
+1. Connect to the configured Orthanc PACS server
+2. Monitor for new patients every 10 seconds
+3. Download and process new DICOM archives automatically
+4. Generate comprehensive PDF reports with AI analysis
+5. Organize all outputs in user-specific directories
+
+### Processing Flow
+1. **PACS Monitoring**: Continuous monitoring of Orthanc server for new studies
+2. **Archive Download**: Automatic download of patient DICOM archives
+3. **File Extraction**: Intelligent extraction and organization of DICOM files
+4. **Image Conversion**: High-quality DICOM to JPEG conversion with medical optimization
+5. **PDF Generation**: Creation of professional A4-formatted reports
+6. **AI Analysis**: GPT-4o Vision OCR extraction and O3-powered medical report generation
+7. **Report Compilation**: Final PDF compilation with AI-generated medical insights
 
 ## 🔧 Configuration Options
 
-### Image Processing
-- **Gamma Correction**: Adjust `black_gamma` parameter (default: 0.8)
-- **JPEG Quality**: Set compression quality (default: 99)
-- **Enhancements**: Configure brightness, contrast, color, sharpness
+### Image Processing Parameters
+```python
+# DICOM to JPEG conversion settings
+DICOM2JPEG(
+    dcm_path="Dicoms",
+    jpeg_path="Images",
+    black_gamma=0.75,           # Gamma correction for medical images
+    enhancements={
+        'brightness': 1.2,      # Brightness adjustment
+        'color': 1.0,           # Color enhancement
+        'contrast': 1.5,        # Contrast optimization
+        'sharpness': 1.5        # Sharpness enhancement
+    },
+    jpeg_quality=99             # High-quality JPEG output
+)
+```
 
-### PDF Layout
-- **Grid Size**: 4 rows × 2 columns per page
+### PDF Layout Configuration
+- **Grid Layout**: 4 rows × 2 columns per page
 - **Page Format**: A4 with optimized margins
 - **Image Sizing**: Automatic aspect ratio preservation
+- **Multi-Page Support**: Automatic pagination for multiple images
 
-### Printing
-- **Default Printer**: EPSON L3250 Series
-- **Windows Only**: Automatic fallback on other platforms
-- **Error Handling**: Comprehensive logging and error recovery
+### AI Processing Settings
+- **OCR Model**: GPT-4o Vision for medical text extraction
+- **Report Generation**: OpenAI O3 for professional medical reports
+- **Batch Processing**: Configurable batch size for image processing
+- **Medical Terminology**: Specialized medical vocabulary handling
 
 ## 📋 System Requirements
 
-### Required
-- Python 3.8+
-- PIL/Pillow for image processing
-- pydicom for DICOM handling
-- reportlab for PDF generation
-- pyorthanc for PACS integration
+### Core Dependencies
+- **Python 3.10+**: Modern Python for AI features
+- **pydicom**: DICOM file handling and processing
+- **Pillow (PIL)**: Advanced image processing
+- **reportlab**: Professional PDF generation
+- **pyorthanc**: Orthanc PACS integration
+- **numpy**: Numerical processing for medical images
+- **opencv**: Computer vision for image enhancement
 
-### Windows Printing
-- pywin32 (Windows only)
-- Compatible printer drivers
+### AI & ML Dependencies
+- **openai**: OpenAI API integration for GPT-4o Vision and O3
+- **pytesseract**: OCR capabilities (backup option)
+- **scipy**: Scientific computing for image processing
+- **matplotlib**: Plotting capabilities for future SR features
 
-### Pending Features Dependencies
-- tesseract-ocr (for OCR functionality)
-- openai (for AI text processing)
-- matplotlib/plotly (for SR visualization)
+### Optional Dependencies
+- **pywin32**: Windows printing support
+- **rich**: Enhanced terminal output
+- **tabulate**: Table formatting utilities
+
+## 🚧 Future Enhancements
+
+### Planned Features
+- **DICOM Structured Report (SR) Processing**: Automated extraction and visualization of measurements
+- **Enhanced AI Analysis**: Integration of specialized medical AI models
+- **Multi-Modal Support**: Support for additional DICOM modalities
+- **Real-Time Monitoring**: WebSocket-based real-time updates
+- **Database Integration**: Patient data persistence and search capabilities
+
+### Technical Improvements
+- **Docker Containerization**: Complete containerization for easy deployment
+- **API Development**: REST API for external integrations
+- **Security Enhancements**: Advanced authentication and authorization
+- **Performance Optimization**: Parallel processing and caching mechanisms
+
+## 🧪 Testing & CI/CD
+
+The project includes comprehensive testing and continuous integration:
+
+- **GitHub Actions**: Automated testing with conda environments
+- **Docker Support**: Containerized deployment options
+- **Code Quality**: Automated linting and code quality checks
+- **Cross-Platform Testing**: Linux-based testing environment
 
 ## 🤝 Contributing
 
-This project is under active development. The core workflow is stable and production-ready, while advanced features (OCR, AI integration, SR processing) are being implemented.
+This project is actively maintained and welcomes contributions. The core workflow is production-ready, while advanced features are continuously being developed.
 
-## 📝 Example
+### Development Guidelines
+1. Follow the existing code structure and documentation patterns
+2. Ensure all medical imaging processing maintains quality standards
+3. Test thoroughly with sample DICOM files
+4. Update documentation for new features
 
-![DICOM-PDF](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
->>>>>>> 59bf4b9598f75f3a68716b82e23e3f129578c713
+## 📝 Example Output
+
+The system generates professional medical reports with AI-enhanced analysis:
+
+![DICOM-PDF Example](https://github.com/user-attachments/assets/95487a15-4532-4c99-9655-c86285aa45bc)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the license file for details.
+
+## 👥 Authors
+
+- **Anderson Barcellos** - Initial development and AI integration
+- **Contributors** - See GitHub contributors for complete list
+
+## 🔗 Related Projects
+
+- [Orthanc PACS Server](https://www.orthanc-server.com/)
+- [pydicom](https://github.com/pydicom/pydicom)
+- [OpenAI API](https://openai.com/api/)

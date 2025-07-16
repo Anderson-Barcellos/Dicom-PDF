@@ -83,14 +83,15 @@ class Unzipper:
 
             # Processar nome do paciente (remover timestamp se presente)
 
-
+            
             print(f"Extração concluída para paciente: {self.name}")
 
         except Exception as e:
             print(f"Erro durante a extração: {e}")
             # Tentar limpar arquivos temporários
             try:
-                self.__del__()
+                if hasattr(self, 'path') and self.path:
+                    self.path.close()
                 if os.path.exists(self.name) and os.path.isdir(self.name):
                     shutil.rmtree(self.name)
             except:

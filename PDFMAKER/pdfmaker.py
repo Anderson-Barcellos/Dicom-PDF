@@ -5,7 +5,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.platypus import Image as rlImage
 from reportlab.lib import colors
 #
-def MkPDF(name: str) -> None:
+def MkPDF(user: str, name: str) -> None:
     """Function to create a PDF file with images. The images will be added to the PDF without resizing, but their display size will be adjusted to fit the page.
     #### Parametros:
     - name: str
@@ -18,7 +18,7 @@ def MkPDF(name: str) -> None:
     # Inicializar o PDF
     # Usar caminho absoluto baseado no diretório atual
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    pdf_path = os.path.join(project_root, "Users", "Anders", "Patients", name, "Report", f"{name}.pdf")
+    pdf_path = os.path.join(project_root, "Users", user, "Patients", name, "Report", f"{name}.pdf")
 
     pdf = SimpleDocTemplate(
         pdf_path,
@@ -28,7 +28,7 @@ def MkPDF(name: str) -> None:
         topMargin=20,
         bottomMargin=doc_margin,
     )
-    folder = os.path.join(project_root, "Users", "Anders", "Patients", name, "Images")
+    folder = os.path.join(project_root, "Users", user, "Patients", name, "Images")
      # Table settings
     num_rows = 4
     num_cols = 2

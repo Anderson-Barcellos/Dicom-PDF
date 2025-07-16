@@ -22,10 +22,28 @@ from pyorthanc import Orthanc
 from DicomManager import Unzipper, DICOM2JPEG
 from PDFMAKER import MkPDF
 from OCR import process_patient_with_ai, markdown_to_pdf
+import json
+
+users = json.load(open("Users/users.json"))
+user_dir = os.path.join(os.getcwd(), "Users")
+
+def sorting_patients(user, orthanc):
+    patients = users[user]["patients"]
+    new_patients = []
+    patients_uids = [patient for patient in orthanc.get_patients()]
+    for patient in patients_uids:
+        if orthanc.get_patients_id_shared_tags(patient)["0008,0080"]["Value"] == users[user]["AET"] and patient not in patients:
+            patients.append(patient)
+            new_patients.append(patient)
+            users[user]["patients_names"].append((orthanc.get_patients_id_shared_tags(patient)["0010,0010"]["Value"], orthanc.get_patients_id_shared_tags(patient)["0020,000d"]["Value"]))
+    users[user]["patients"] = patients
+    json.dump(users, open("Users/users.json", "w"))
+    return new_patients
+
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-
+users = json.load(open("Users/users.json"))
 
 ###############################################################################
 #                         WINDOWS-SPECIFIC IMPORTS                            #
@@ -134,7 +152,7 @@ sleep_with_while(10)
     #    print(f"Erro ao imprimir o arquivo: {e}")
 
 
-def Extract_Convert_Img(file: str):
+def Extract_Convert_Img(file: str, user: str):
     """
     🖼️ Extract_Convert_Img
     Extracts DICOM images from a ZIP file, converts them to JPEG format, and generates a PDF report. This function is part of a medical imaging workflow, facilitating the conversion and compilation of DICOM images for further analysis and reporting.
@@ -179,7 +197,7 @@ def Extract_Convert_Img(file: str):
                 pass
 
     # Create patient folders
-    base_dir = os.path.join(os.getcwd(), "Users", "Anders", "Patients")
+    base_dir = os.path.join(os.getcwd(), "Users", user, "Patients")
     patient_dir = os.path.join(base_dir, name)
     os.makedirs(patient_dir, exist_ok=True)
     images_dir = os.path.join(patient_dir, "Images")
@@ -203,7 +221,7 @@ def Extract_Convert_Img(file: str):
     # Generate the PDF
     try:
         print(f"📄 Gerando PDF para {name}...")
-        MkPDF(name)
+        MkPDF(user, name)
         print(f"✅ PDF gerado com sucesso")
     except Exception as e:
         print(f"❌ Erro na geração do PDF: {e}")
@@ -220,6 +238,7 @@ def Extract_Convert_Img(file: str):
         try:
             print(f"🤖 Gerando laudo com IA para {name}...")
             process_patient_with_ai(
+                user=user,
                 patient_name=name,
                 api_key=OPENAI_API_KEY,
             )
@@ -271,7 +290,7 @@ def orthanc():
     print("🔗 Conectando ao servidor: http://ultrassom.ai:8042")
 
     try:
-        orthanc = Orthanc("http://ultrassom.ai:8042", "anders", "andi110386")
+        orthanc = Orthanc("http://ultrassom.ai:8042", "admin", "admin")
         print("✅ Conexão estabelecida com sucesso")
     except Exception as e:
         print(f"❌ Erro ao conectar ao Orthanc: {e}")
@@ -283,80 +302,75 @@ def orthanc():
     consecutive_errors = 0
     max_consecutive_errors = 5
 
-    try:
-        while True:
-            try:
-                # Load pacientes with ZIPS folder
-                oldest_patients = [patient[:-4] for patient in os.listdir("ZIPS") if patient.endswith('.zip')]
-                print(f"📁 Pacientes locais: {len(oldest_patients)}")
-                if oldest_patients:
-                    print(f"   Últimos: {oldest_patients[-3:] if len(oldest_patients) >= 3 else oldest_patients}")
 
-                # Update patients from server
-                print("🔍 Verificando novos pacientes no servidor...")
-                latest_patients = orthanc.get_patients()
-                new_patients = [p for p in latest_patients if p not in oldest_patients]
 
-                print(f"🏥 Pacientes no servidor: {len(latest_patients)}")
-                print(f"🆕 Novos pacientes encontrados: {len(new_patients)}")
+    def main_loop():
+            while True:
+                try:
+                    #Sorting patients
+                    for user in users.keys():
 
-                if not new_patients:
-                    print("ℹ️ Nenhum novo paciente encontrado, Anders.... Procurando")
-                    sleep_with_while(10)
-                    consecutive_errors = 0  # Reset error counter on success
-                else:
-                    print(f"🚀 Processando {len(new_patients)} novos pacientes...")
+                        print(f"🔍 Buscando pacientes para {user}...")
+                        new_patients = sorting_patients(user, orthanc)
 
-                    for i, patient in enumerate(new_patients, 1):
-                        try:
-                            print(f"\n📥 [{i}/{len(new_patients)}] Baixando paciente: {patient}")
+                        if  new_patients == []:
+                            print(f"ℹ️ Nenhum novo paciente encontrado para {user}.... ")
+                            consecutive_errors = 0  # Reset error counter on success
+                        else:
+                            print(f"🚀 Processando {len(new_patients)} novos pacientes...")
 
-                            # Download patient archive
-                            response = orthanc.get_patients_id_archive(str(patient))
-                            zip_path = f"ZIPS/{patient}.zip"
+                            for i, patient in enumerate(new_patients, 1):
+                                try:
+                                    print(f"\n📥 [{i}/{len(new_patients)}] Baixando paciente: {patient}")
 
-                            with open(zip_path, "wb") as f:
-                                f.write(response)
+                                    # Download patient archive
+                                    response = orthanc.get_patients_id_archive(str(patient))
+                                    zip_path = f"ZIPS/{patient}.zip"
 
-                            file_size = os.path.getsize(zip_path) / 1024  # KB
-                            print(f"✅ Arquivo baixado: {zip_path} ({file_size:.1f} KB)")
+                                    with open(zip_path, "wb") as f:
+                                        f.write(response)
 
-                            # Process patient
-                            time.sleep(1)  # Small delay to ensure file is fully written
-                            result = Extract_Convert_Img(f"{patient}.zip")
+                                    file_size = os.path.getsize(zip_path) / 1024  # KB
+                                    print(f"✅ Arquivo baixado: {zip_path} ({file_size:.1f} KB)")
 
-                            if result:
-                                print(f"✅ Paciente {patient} processado com sucesso")
-                            else:
-                                print(f"⚠️ Falha no processamento do paciente {patient}")
+                                    # Process patient
+                                    time.sleep(1)  # Small delay to ensure file is fully written
+                                    result = Extract_Convert_Img(f"{patient}.zip", user)
 
-                        except Exception as e:
-                            print(f"❌ Erro ao processar paciente {patient}: {e}")
-                            continue
+                                    if result:
+                                        print(f"✅ Paciente {patient} processado com sucesso")
+                                        time.sleep(10)
+                                    else:
+                                        print(f"⚠️ Falha no processamento do paciente {patient}")
 
-                    print(f"\n🎉 Processamento concluído para {len(new_patients)} pacientes")
-                    consecutive_errors = 0  # Reset error counter on success
+                                except Exception as e:
+                                    print(f"❌ Erro ao processar paciente {patient}: {e}")
+                                    continue
 
-                # Wait before checking again
-                sleep_with_while(10)
+                            print(f"\n🎉 Processamento concluído para {len(new_patients)} pacientes")
+                            consecutive_errors = 0  # Reset error counter on success
 
-            except Exception as e:
-                consecutive_errors += 1
-                print(f"❌ Erro no ciclo de monitoramento (tentativa {consecutive_errors}/{max_consecutive_errors}): {e}")
+                        # Wait before checking again
+                        sleep_with_while(10)
 
-                if consecutive_errors >= max_consecutive_errors:
-                    print(f"🚨 Muitos erros consecutivos ({consecutive_errors}). Encerrando monitoramento.")
-                    break
+                except Exception as e:
+                    consecutive_errors += 1
+                    print(f"❌ Erro no ciclo de monitoramento (tentativa {consecutive_errors}/{max_consecutive_errors}): {e}")
 
-                print(f"⏳ Aguardando antes de tentar novamente...")
-                sleep_with_while(30)  # Wait longer after error
+                    if consecutive_errors >= max_consecutive_errors:
+                        print(f"🚨 Muitos erros consecutivos ({consecutive_errors}). Encerrando monitoramento.")
+                        break
 
-    except KeyboardInterrupt:
-        print("\n🛑 Monitoramento interrompido pelo usuário")
-    except Exception as e:
-        print(f"❌ Erro fatal no monitoramento: {e}")
-    finally:
-        print("🔚 Encerrando monitoramento do Orthanc PACS")
+                    print(f"⏳ Aguardando antes de tentar novamente...")
+                    sleep_with_while(30)  # Wait longer after error
+
+                except KeyboardInterrupt:
+                    print("\n🛑 Monitoramento interrompido pelo usuário")
+                finally:
+                     print("🔚 Encerrando monitoramento do Orthanc PACS")
+
+    # Inicia o loop principal de monitoramento
+    main_loop()
 
 if __name__ == "__main__":
     orthanc()

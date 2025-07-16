@@ -1,14 +1,20 @@
+# Core dependencies
 pydicom
-Pillow
-numpy
+pillow
 matplotlib
 reportlab
-opencv-python
 pytesseract
-pyorthanc
-fpdf
 rich
 tabulate
-scipy
-pywin32; sys_platform == "win32"
+
+# Pip-only dependencies
+pyorthanc
+fpdf
 openai
+
+# Optional Windows printing support
+pywin32; sys_platform == "win32"
+
+# Development and testing
+pytest
+flake8
